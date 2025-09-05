@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Product Template Form View Inheritance -->
+    <record id="view_product_template_form_inherit_office" model="ir.ui.view">
+        <field name="name">product.template.form.inherit.office</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='general_information']" position="after">
+                <page string="Office" name="office" attrs="{'invisible': [('office_id', '=', False)]}">
+                    <group>
+                        <group>
+                            <field name="office_id"/>
+                            <field name="dilicom_code"/>
+                            <field name="is_office_product" invisible="1"/>
+                        </group>
+                        <group>
+                            <button name="action_view_office" type="object" string="View Office" class="oe_highlight" attrs="{'invisible': [('office_id', '=', False)]}"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+            <xpath expr="//div[@name='options']" position="inside">
+                <div>
+                    <field name="is_office_product" invisible="1"/>
+                    <label for="is_office_product" attrs="{'invisible': [('is_office_product', '=', False)]}"/>
+                    <span attrs="{'invisible': [('is_office_product', '=', False)]}" class="badge badge-info">Office Product</span>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Product Template Tree View Inheritance -->
+    <record id="view_product_template_tree_inherit_office" model="ir.ui.view">
+        <field name="name">product.template.tree.inherit.office</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_tree_view"/>
+        <field name="arch" type="xml">
+            <field name="default_code" position="after">
+                <field name="dilicom_code" optional="show"/>
+                <field name="office_id" optional="show"/>
+                <field name="is_office_product" invisible="1"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Product Template Search View Inheritance -->
+    <record id="view_product_template_search_inherit_office" model="ir.ui.view">
+        <field name="name">product.template.search.inherit.office</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='consumable']" position="after">
+                <separator/>
+                <filter string="Office Products" name="office_products" domain="[('is_office_product', '=', True)]"/>
+                <filter string="Dilicom Code 2" name="dilicom_code_2" domain="[('dilicom_code', '=', '2')]"/>
+            </xpath>
+            <xpath expr="//group[@name='groupby']" position="inside">
+                <filter string="Office" name="groupby_office" domain="[]" context="{'group_by': 'office_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Office Products Action Window -->
+    <record id="action_office_products" model="ir.actions.act_window">
+        <field name="name">Office Products</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="context">{'search_default_office_products': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No office products found
+            </p>
+            <p>
+                Office products are generated from offices and have dilicom_code = 2.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="menu_office_products" name="Office Products" parent="menu_diffusion_office_root" action="action_office_products" sequence="30"/>
+</odoo>

@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_diffusion_office_public,diffusion.office.public,model_diffusion_office,,1,0,0,0
+access_diffusion_office_user,diffusion.office.user,model_diffusion_office,base.group_user,1,1,1,1
+access_diffusion_office_category_public,diffusion.office.category.public,model_diffusion_office_category,,1,0,0,0
+access_diffusion_office_category_user,diffusion.office.category.user,model_diffusion_office_category,base.group_user,1,1,1,1
+access_diffusion_office_order_user,diffusion.office.order.user,model_diffusion_office_order,base.group_user,1,1,1,1
+access_diffusion_office_order_line_user,diffusion.office.order.line.user,model_diffusion_office_order_line,base.group_user,1,1,1,1

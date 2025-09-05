@@ -1,0 +1,79 @@
+/* Office CSS Styles */
+
+/* Office Card Styles */
+.js_offices .card {
+    transition: all 0.3s ease;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.js_offices .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.js_offices .card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.js_offices .card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.js_offices .card-footer {
+    background-color: transparent;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Office Detail Page Styles */
+.js_office h1 {
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.js_office .card-header {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.js_office .nav-link.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.js_office .product_price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #28a745;
+    margin: 10px 0;
+}
+
+.js_office .oe_product_cart {
+    transition: all 0.3s ease;
+}
+
+.js_office .oe_product_cart:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.js_office .oe_product_cart .card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Badge for Office Products */
+.badge-office {
+    background-color: #17a2b8;
+    color: white;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .js_offices .card-img-top,
+    .js_office .oe_product_cart .card-img-top {
+        height: 150px;
+    }
+}

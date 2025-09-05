@@ -1,0 +1,203 @@
+<odoo>
+    <!-- views/templates.xml -->
+    <template id="portal_sale_order_page" inherit_id="sale.sale_order_portal_template">
+        <!--        <xpath expr="//t[@id='sale_order_portal_sidebar']" position="before">-->
+        <xpath expr="//div[hasclass('gap-4')]" position="before">
+            <div class="mb8">
+                <a type="button" t-attf-href="/my/orders/download_picking_xlsx?id=#{sale_order.id}"
+                   style="width: fit-content; margin: auto !important;" class="btn btn-primary">
+                    Télécharger toutes les Picking List (Excel)
+                </a>
+            </div>
+        </xpath>
+    </template>
+    <template id="editor_page_template" name="Page nos éditeurs">
+        <t t-call="website.layout">
+            <t t-set="pageName" t-value="'fast_cart_page'"/>
+            <div id="wrap" class="oe_structure oe_empty">
+                <section class="s_info_block_1 tp-editor-snippet-valign o_colored_level" data-snippet="s_info_block_1"
+                         data-name="Bloc d&amp;#x27;information - 1" style="background-image: none;">
+                    <div class="px-0 container">
+                        <div class="row g-0 s_nb_column_fixed align-items-center">
+                            <div class="col-lg-4 offset-lg-1 p-4 o_colored_level">
+                                <h2 class="o_default_snippet_text">NOS ÉDITEURS</h2>
+                                <p class="o_default_snippet_text">Diffusion Nord Sud distribue dans toute la Belgique un
+                                    grand nombre d'éditeurs.<br/>Certain d'entre eux sont exclusivement distribué par
+                                    Diffusion Nord&amp;nbsp; sud ...
+                                </p>
+                                <a href="/shop" class="mt-2 btn btn-primary" data-bs-original-title="" title="">Achetez
+                                    maintenant
+                                </a>
+                            </div>
+                            <div class="col-lg-6 offset-lg-1 o_colored_level">
+                                <img src="/web/image/956-a3d9786c/photo-3d-character-holding-binder.webp" alt=""
+                                     class="img img-fluid o_we_custom_image" data-mimetype="image/webp"
+                                     data-original-id="952"
+                                     data-original-src="/web/image/952-994097fe/photo-3d-character-holding-binder.jpg"
+                                     data-mimetype-before-conversion="image/jpeg" data-resize-width="962"
+                                     loading="lazy"/>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="text-center pt64 pb64 o_colored_level" data-snippet="s_embed_code"
+                         data-name="Code intégré" style="background-image: none;">
+                    <div class="container">
+                        <div class="col-12 pt8 bg-light o_default_snippet_text">
+                            <!--<t t-set="editeurs" t-value="sorted(list(set(request.env['product.template'].sudo().search([('seller_ids.partner_id.is_company', '=', True),('seller_ids.partner_id.supplier_rank', '>', 0)], limit=1000, order='editeur asc').mapped('editeur'))))"/>-->
+                            <h3>Liste des éditeurs (triés alphabétiquement)</h3>
+                            <div class="editeur_page_container">
+                                <t t-foreach="editors_json" t-as="editeur">
+                                    <a t-attf-href="/shop?tags={{editeur.get('id')}}" class="editeur_page_item_card">
+                                        <t t-out="editeur.get('name')"/>
+                                    </a>
+                                </t>
+                            </div>
+                        </div>
+                        <div class="editeur_pager">
+                            <t t-call="website.pager"/>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+    <template id="cart_fast_template" name="Cart Fast">
+        <t t-call="website.layout">
+            <t t-set="pageName" t-value="'fast_cart_page'"/>
+            <div class="container">
+                <h1>Panier rapide</h1>
+
+                <!-- Barre de recherche pour ajouter des produits via la référence interne -->
+                <div class="search-bar">
+                    <form action="/shop/add_product" class="add_product">
+                        <input type="text" name="product_reference" placeholder="Référence interne du produit"
+                               autofocus="1" class="search_product"/>
+                        <button type="submit" class="btn btn-primary js_fast_add">Ajouter au panier</button>
+                        <div t-if="ean_notfound" class="ean_notfound">
+                            <t t-if="len(ean_notfound) > 0">
+                                Article(s) absent de notre catalogue:
+                                <t t-out="ean_notfound"/>
+                            </t>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Tableau des lignes du panier -->
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                <a href="#">Image</a>
+                            </th>
+                            <th>
+                                <a href="#">Nom</a>
+                            </th>
+                            <th>
+                                <a href="#">EAN</a>
+                            </th>
+                            <th>
+                                <a href="#">Quantité</a>
+                            </th>
+                            <th>
+                                <a href="#">Prix unitaire</a>
+                            </th>
+                            <th>
+                                <a href="#">Remise</a>
+                            </th>
+                            <th>
+                                <a href="#">Total</a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="order.order_line" t-as="line">
+                            <tr>
+                                <td>
+                                    <img t-att-src="line.product_id.product_tmpl_id.dilicom_url_thumb"
+                                         alt="Product Image" width="50"
+                                         height="auto"/>
+                                </td>
+                                <td>
+                                    <a t-attf-href="/shop/product-{{line.product_id.product_tmpl_id.id}}" style="display: flex; flex-wrap: wrap">
+                                        <span class="fast_cart_product_name" t-esc="line.product_id.name" style="margin-right: 1rem"/>
+                                        <div class="fast_cart_product_label">
+                                            <span t-esc="line.product_id.dr_label_id.name"
+                                                  t-attf-style="
+                                                                background-color: {{line.product_id.dr_label_id.background_color}};
+                                                                color: {{line.product_id.dr_label_id.text_color}};
+                                                                padding: 0.25rem; border-radius: 15px;"/>
+                                        </div>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a t-attf-href="/shop/product-{{line.product_id.product_tmpl_id.id}}">
+                                        <t t-esc="line.product_id.barcode or ''"/>
+                                    </a>
+                                </td>
+                                <td>
+                                    <div class="fast_cart_qty">
+
+                                        <i class="fa fa-minus"
+                                           t-att-data-lineid="line.id"
+                                           t-att-data-productid="line.product_id.id"
+                                           t-att-data-qty="int(line.product_uom_qty)-1"/>
+                                        <div class="qty_value">
+                                            <span t-out="str(int(line.product_uom_qty))"/>
+                                        </div>
+
+                                        <i class="fa fa-plus"
+                                           t-att-data-lineid="line.id"
+                                           t-att-data-productid="line.product_id.id"
+                                           t-att-data-qty="int(line.product_uom_qty)+1"/>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="price_unit" t-esc="round(line.price_unit,2)"/>
+                                    <span class="currency_symbol">€</span>
+                                </td>
+                                <td>
+                                    <span class="line_discount" t-esc="line.discount"/>
+                                    <span class="line_discount_symbol">%</span>
+                                </td>
+                                <td>
+                                    <span class="price_subtotal" t-esc="round(line.price_total, 2)"/>
+                                    <span class="currency_symbol">€</span>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+
+                <t t-call="net_diffusion.fast_cart_summary"/>
+            </div>
+        </t>
+    </template>
+    <template id="fast_cart_summary" name="Cart Fast Summary">
+        <div class="fast_cart_summary">
+            <div id="o_cart_summary">
+                <div class="o_total_card card sticky-lg-top">
+                    <div class="card-body p-0 p-lg-4">
+                        <t t-call="website_sale.total"/>
+                        <div class=" d-flex flex-column pt-4">
+                            <a role="button" name="website_sale_main_button" class=" btn btn-primary  w-100"
+                               href="/shop/checkout?express=1">
+                                Paiement
+                                <i class="fa fa-angle-right ms-2 fw-light"/>
+                            </a>
+                            <div class="position-relative d-flex w-100 justify-content-center align-items-center my-2 opacity-75">
+                                <hr class="w-100"/>
+                                <span class="px-3">ou</span>
+                                <hr class="w-100"/>
+                            </div>
+                            <a class="text-center" href="/shop">
+                                <i class="fa fa-angle-left me-2 fw-light"/>
+                                Poursuivre les achats
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</odoo>

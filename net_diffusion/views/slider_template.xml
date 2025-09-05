@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="slider_product" name="Slider Product Template">
+        <swiper-slide
+                t-if="((list(filter(lambda lg : lg[0] == lang, languages))[0][0].split('_').pop()) in sliderj.language_ids.code ) or (not sliderj.language_ids)"
+                class="swiper-slide" lazy="true" space-between="35">
+            <div class="sliderProductContainer">
+
+                <t t-set="product" t-value="slider.sudo().product_id"/>
+                <t t-set="combination" t-value="product._get_first_possible_combination()"/>
+                <t t-set="combination_info" t-value="product.sudo()._get_combination_info(combination, add_qty=add_qty)"/>
+                <t t-set="product_id" t-value="product.product_variant_id"/>
+
+                <t t-set="product_href" t-value="product.website_url"/>
+                <div t-attf-class="col tp-product-item tp-product-item-grid-2"
+                     t-att-data-product-template-id="product.id" style="width: 100%">
+
+                    <form action="/shop/cart/update" method="post" itemscope="itemscope"
+                          itemtype="http://schema.org/Product" class="h-100 bg-white"
+                          t-att-data-publish="product.website_published and 'on' or 'off'">
+                        <input name="product_id" t-att-value="product_variant_id" type="hidden"/>
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"
+                               t-nocache="The csrf token must always be up to date."/>
+                        <div class="tp-product-wrapper border overflow-hidden tp-rounded-border-radius h-100">
+                            <div class="tp-product-top position-relative overflow-hidden">
+                                <a t-att-href="product_href" class="tp-product-image-container d-block" itemprop="url" style="padding: 4rem">
+                                    <img t-attf-src="#{product.dilicom_url_thumb}" itemprop="image" loading="lazy"
+                                         class="img-fluid h-100 w-100 tp-product-image"
+                                         style="max-width: 114px; max-height:180px; margin: auto"/>
+                                </a>
+                                <t t-call="theme_prime.product_label">
+                                    <t t-set="label" t-value="product.dr_label_id"/>
+                                </t>
+                                <t t-call="theme_prime.product_label">
+                                    <t t-set="stock" t-value="True"/>
+                                </t>
+                                <t t-set="_classes" t-valuef="tp-action-buttons-rounded"/>
+                                <div t-attf-class="d-flex flex-column position-absolute tp-action-buttons #{_classes} o_wsale_product_btn">
+                                    <button type="button" role="button"
+                                            class="btn btn-link p-0 tp-action-buttons-toggler d-lg-none">
+                                        <i class="fa fa-angle-down" role="img" aria-label="More options"/>
+                                    </button>
+                                    <a href="#" role="button" class="a-submit d-none tp-action-toggle"
+                                       aria-label="Shopping cart">
+                                        <i class="dri dri-cart"/>
+                                    </a>
+                                    <a href="#" class="tp-product-quick-view-action d-none d-lg-flex tp-action-toggle"
+                                       t-att-data-product-id="product.id" title="Quick View">
+                                        <i class="dri dri-eye"/>
+                                    </a>
+                                    <button type="button" role="button"
+                                            class="btn btn-link p-0 o_add_wishlist d-none d-lg-flex tp-action-toggle"
+                                            t-att-disabled="product._is_in_wishlist() or None" title="Add to Wishlist"
+                                            t-att-data-product-template-id="product.id"
+                                            t-att-data-product-product-id="product_variant_id" data-action="o_wishlist">
+                                        <i class="dri dri-wishlist" role="img" aria-label="Add to wishlist"/>
+                                    </button>
+                                </div>
+                                <div class="tp-add-to-cart-btn o_wsale_product_btn d-none d-lg-block p-2"
+                                     t-if="product_variant_id and (combination_info['has_discounted_price'] or not website.prevent_zero_price_sale) and product._website_show_quick_add()">
+                                    <a href="#" role="button"
+                                       class="a-submit btn btn-primary w-100 shadow-none rounded-pill"
+                                       aria-label="Shopping cart">
+                                        <i class="dri dri-cart"/>
+                                        Add to Cart
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="tp-product-content p-2 text-center text-lg-start">
+                                <h6 class="mb-1 tp-product-title">
+                                    <a class="tp-link-dark text-truncate d-block" style="max-width: 200px"
+                                       t-att-title="product.name" itemprop="name" t-att-href="product_href"
+                                       t-att-content="product.name" t-field="product.name"/>
+                                    <a t-if="not product.website_published" role="button" t-att-href="product_href"
+                                       class="btn btn-sm btn-danger" title="This product is unpublished.">
+                                        Unpublished
+                                    </a>
+                                </h6>
+                                <div class="d-flex flex-wrap flex-column flex-lg-row justify-content-center justify-content-lg-between align-items-center position-relative">
+                                    <t t-set="_classes" t-valuef="me-2"/>
+
+                                    <div t-attf-class="product_price #{_classes}" itemprop="offers"
+                                         itemscope="itemscope" itemtype="http://schema.org/Offer">
+                                        <span class="h6 text-primary mb-0"
+                                              t-if="combination_info['price'] or not website.prevent_zero_price_sale"
+                                              t-out="combination_info['price']"
+                                              t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                        <span class="h6 mb-0" t-else="" t-field="website.prevent_zero_price_sale_text"/>
+                                        <t t-if="combination_info['has_discounted_price']">
+                                            <del class="text-body ms-1 h6 mb-0" style="white-space: nowrap;">
+                                                <span class="small" t-out="round(combination_info['list_price'], 2)"
+                                                      t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                            </del>
+                                        </t>
+                                        <span itemprop="price" style="display:none;" t-out="combination_info['price']"/>
+                                        <span itemprop="priceCurrency" style="display:none;"
+                                              t-out="website.currency_id.name"/>
+                                        <small t-if="combination_info['has_discounted_price']"
+                                               class="tp-discount-percentage d-none d-md-inline-block ms-1">
+                                            -<t t-out="round(((combination_info['list_price'] - combination_info['price']) / combination_info['list_price']) * 100, 2)"/>
+                                            %
+                                        </small>
+                                    </div>
+
+                                    <t t-set="_classes"
+                                       t-valuef="tp-product-preview-swatches-sm bg-white mt-1 mt-lg-0"/>
+                                    <t t-set="parent_selector" t-valuef="form"/>
+                                    <t t-set="img_selector" t-valuef=".tp-product-image-container img"/>
+
+                                    <t t-set="preview_swatches"
+                                       t-value="product._get_product_preview_swatches(limit=_limit or 3)"/>
+                                    <div t-if="len(preview_swatches['swatches']) > 1"
+                                         t-attf-class="tp-product-preview-swatches #{_classes}"
+                                         t-attf-data-default-img-src="/web/image/product.template/#{product.id}/image_512"
+                                         t-att-data-parent-selector="parent_selector"
+                                         t-att-data-img-selector="img_selector">
+                                        <div class="d-flex align-items-center">
+                                            <div t-foreach="preview_swatches['swatches']" t-as="swatch"
+                                                 data-bs-toggle="tooltip" t-att-title="swatch['name']"
+                                                 data-bs-placement="top"
+                                                 class="rounded-circle cursor-pointer tp-swatch position-relative"
+                                                 t-att-data-preview-img-src="'%s/%s' % (swatch['preview_image'], img_size or 'image_512')">
+                                                <div t-if="swatch['type'] == 'color'" class="h-100 w-100 rounded-circle"
+                                                     t-attf-style="background-color: #{swatch['value']}"/>
+                                                <div t-elif="swatch['type'] == 'image'"
+                                                     class="h-100 w-100 rounded-circle"
+                                                     t-attf-style="background-image: url(#{swatch['value']})"/>
+                                            </div>
+                                            <div t-if="preview_swatches['more'] > 0"
+                                                 class="tp-swatch position-relative more border-0">
+                                                <a class="link-dark d-flex align-items-center h-100 w-100"
+                                                   t-att-href="product.website_url">+
+                                                    <t t-out="preview_swatches['more']"/>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </swiper-slide>
+    </template>
+</odoo>
+

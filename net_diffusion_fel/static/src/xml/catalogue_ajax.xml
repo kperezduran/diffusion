@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="net_diffusion_fel.products_ajax">
+        <div class="catalogue_products_container">
+            <t t-if="products.length > 0">
+                <t t-foreach="products" t-as="product" t-key="product.id">
+                    <div class="catalogue_product_item">
+                        <!-- Ribbon availability overlay -->
+                        <div t-if="product.disponibility_name != ''" class="catalogue_product_dispo_label"
+                             t-attf-style="background-color:{{product.disponibility_color_bck}}">
+                            <span t-out="product.disponibility_name"
+                                  t-attf-style="color:{{product.disponibility_color}}"/>
+                        </div>
+                        <!-- Left: image -->
+                        <div class="catalogue_product_item_header">
+                            <div class="catalogue_product_image_container">
+                                <a class="catalogue_product_image" t-att-href="product.website_url">
+                                    <img class="catalogue_product_image" t-att-src="product.dilicom_url"/>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- Right: content -->
+                        <div class="catalogue_product_item_content">
+                            <div class="catalogue_product_title">
+                                <a t-att-href="product.website_url">
+                                    <span t-out="product.name"/>
+                                </a>
+                            </div>
+                            <div class="catalogue_product_meta">
+                                <div t-if="product.auteur != ''" class="catalogue_product_author">
+                                    <span class="catalogue_product_label">Auteur</span>
+                                    <span class="catalogue_product_value" t-out="product.auteur"/>
+                                </div>
+                                <div t-if="product.editeur != ''" class="catalogue_product_editor">
+                                    <span class="catalogue_product_label">Éditeur</span>
+                                    <span class="catalogue_product_value" t-out="product.editeur"/>
+                                </div>
+                                <div t-if="product.barcode != ''" class="catalogue_product_isbn">
+                                    <span class="catalogue_product_label">ISBN</span>
+                                    <span class="catalogue_product_value" t-out="product.barcode"/>
+                                </div>
+                                <div t-if="product.date_parution != ''" class="catalogue_product_date">
+                                    <span class="catalogue_product_label">Parution</span>
+                                    <span class="catalogue_product_value" t-out="product.date_parution"/>
+                                </div>
+                                <div t-if="product.type_livre != ''" class="catalogue_product_type">
+                                    <span class="catalogue_product_label">Type</span>
+                                    <span class="catalogue_product_value" t-out="product.type_livre"/>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Footer: price + CTA -->
+                        <div class="catalogue_product_item_footer">
+                            <div class="catalogue_product_prices">
+                                <t t-if="product.price == product.base_price">
+                                    <div class="catalogue_product_item_price">
+                                        <span t-out="product.price"/>
+                                        <span>€</span>
+                                    </div>
+                                </t>
+                                <t t-if="product.price &lt; product.base_price">
+                                    <div class="catalogue_product_item_old_price">
+                                        <span t-out="product.base_price"/>
+                                        <span>€</span>
+                                    </div>
+                                    <div class="catalogue_product_item_price">
+                                        <span t-out="product.price"/>
+                                        <span>€</span>
+                                    </div>
+                                </t>
+                            </div>
+                            <form action="/shop/cart/update" method="post" class="js_office">
+                                <div class="text-center text-md-start o_wsale_product_btn mt-3">
+                                    <input name="product_id" type="hidden" t-att-value="product.variant"/>
+                                    <input type="hidden" name="csrf_token" t-att-value="product.csrf_token"/>
+                                    <a href="#" role="button" id="add_to_cart" class="btn btn-primary js_add_cart_json"
+                                       aria-label="Panier">
+                                        <i class="dri dri-cart"></i>
+                                        ajouter au panier
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </t>
+            </t>
+            <t t-else="products.length > 0">
+                <div class="alert alert-info text-center">Aucuns produits trouvés</div>
+            </t>
+        </div>
+    </t>
+</templates>

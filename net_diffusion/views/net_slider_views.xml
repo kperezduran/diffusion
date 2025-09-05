@@ -1,0 +1,62 @@
+<odoo>
+  <data>
+    <record id="net_slider_injection_form" model="ir.ui.view">
+      <field name="name">website.net_slider_injection.form</field>
+      <field name="model">website.net_slider_injection</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group>
+              <group>
+                <field name="name"/>
+                <field name="active"/>
+                <field name="publish"/>
+                <field name="sequence"/>
+              </group>
+              <group>
+                <field name="slider_id"/>
+                <field name="page_url" placeholder="/shop or full URL"/>
+                <field name="css_selector" placeholder="#target or .class"/>
+              </group>
+            </group>
+            <group string="Restrictions">
+              <group>
+                <field name="website_ids" widget="many2many_tags"/>
+                <field name="language_ids" widget="many2many_tags"/>
+              </group>
+              <group>
+                <field name="date_from"/>
+                <field name="date_to"/>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="net_slider_injection_tree" model="ir.ui.view">
+      <field name="name">website.net_slider_injection.tree</field>
+      <field name="model">website.net_slider_injection</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="sequence" widget="handle"/>
+          <field name="name"/>
+          <field name="active"/>
+          <field name="publish"/>
+          <field name="slider_id"/>
+          <field name="page_url"/>
+          <field name="css_selector"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="action_net_slider_injection" model="ir.actions.act_window">
+      <field name="name">Net Sliders Injection</field>
+      <field name="res_model">website.net_slider_injection</field>
+      <field name="view_mode">tree,form</field>
+      <field name="view_id" ref="net_slider_injection_tree"/>
+    </record>
+
+    <menuitem id="menu_net_slider_injection" name="Net Sliders Injection" parent="website_sale.menu_ecommerce" action="action_net_slider_injection" sequence="45"/>
+  </data>
+</odoo>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Offices List Template -->
+    <template id="offices" name="Offices">
+        <t t-call="website.layout">
+            <div id="wrap" class="js_offices">
+                <div class="oe_structure"/>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h1 class="text-center">Our Offices</h1>
+                            <div class="oe_structure"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <t t-foreach="offices" t-as="office">
+                                    <div class="col-lg-4 col-md-6 mb-4">
+                                        <div class="card h-100">
+                                            <a t-att-href="'/office/%s' % slug(office)">
+                                                <span t-if="office.image"
+                                                      t-out="office.image"
+                                                      t-options="{'widget': 'image', 'preview_image': 'image_1920', 'itemprop': 'image', 'class': 'card-img-top'}"/>
+                                                <img t-else="" class="card-img-top" src="/net_diffusion_office/static/src/img/placeholder.png" alt="Office Image"/>
+                                            </a>
+                                            <div class="card-body">
+                                                <h4 class="card-title">
+                                                    <a t-att-href="'/office/%s' % slug(office)"><t t-esc="office.name"/></a>
+                                                </h4>
+                                                <p class="card-text">
+                                                    <strong>Theme:</strong> <t t-esc="office.theme_id.name"/><br/>
+                                                    <strong>Delivery Date:</strong> <t t-esc="office.delivery_date"/><br/>
+                                                    <strong>Products:</strong> <t t-esc="office.product_count"/>
+                                                </p>
+                                            </div>
+                                            <div class="card-footer">
+                                                <a t-att-href="'/office/%s' % slug(office)" class="btn btn-primary">View Products</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <t t-call="website.pager"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="oe_structure"/>
+            </div>
+        </t>
+    </template>
+
+    <!-- Office Detail Template -->
+    <template id="office" name="Office">
+        <t t-call="website.layout">
+            <div id="wrap" class="js_office">
+                <div class="oe_structure"/>
+                <section class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h1 class="text-center"><t t-esc="office.name"/></h1>
+                            <div class="oe_structure"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h4>Office Information</h4>
+                                </div>
+                                <div class="card-body">
+                                    <p>
+                                        <strong>Theme:</strong> <t t-esc="office.theme_id.name"/><br/>
+                                        <strong>Date Limit:</strong> <t t-esc="office.date_limit"/><br/>
+                                        <strong>Delivery Date:</strong> <t t-esc="office.delivery_date"/><br/>
+                                        <strong>Products:</strong> <t t-esc="len(products)"/>
+                                    </p>
+                                </div>
+                            </div>
+<!--                            <div class="card mb-4">-->
+<!--                                <div class="card-header">-->
+<!--                                    <h4>Categories</h4>-->
+<!--                                </div>-->
+<!--                                <div class="card-body">-->
+<!--                                    <ul class="nav flex-column">-->
+<!--                                        <li class="nav-item">-->
+<!--                                            <a t-att-href="keep('/office/%s' % slug(office), search=search)" t-attf-class="nav-link#{'' if category else ' active'}">All Categories</a>-->
+<!--                                        </li>-->
+<!--                                        <t t-foreach="categories" t-as="c">-->
+<!--                                            <li class="nav-item">-->
+<!--                                                <a t-att-href="keep('/office/%s' % slug(office), category=c.id, search=search)" t-attf-class="nav-link#{' active' if category and category.id == c.id else ''}">-->
+<!--                                                    <t t-esc="c.name"/>-->
+<!--                                                </a>-->
+<!--                                            </li>-->
+<!--                                        </t>-->
+<!--                                    </ul>-->
+<!--                                </div>-->
+<!--                            </div>-->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h4>Search</h4>
+                                </div>
+                                <div class="card-body">
+                                    <form t-att-action="'/office/%s' % slug(office)" method="get" class="form-inline">
+                                        <input type="hidden" name="category" t-att-value="category and category.id or ''"/>
+                                        <div class="input-group w-100">
+                                            <input type="text" name="search" class="form-control" placeholder="Search..." t-att-value="search"/>
+                                            <div class="input-group-append">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fa fa-search"/>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="row">
+                                <t t-foreach="products" t-as="product">
+                                    <div class="col-lg-12 col-md-12 mb-4">
+                                        <form t-att-action="'/shop/cart/update' if today > office.date_limit else '/office/cart/update'" method="post" class="card h-100 oe_product_cart">
+                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                            <input type="hidden" name="office_id" t-att-value="office.id"/>
+                                            <a t-att-href="product.website_url">
+                                                <img t-if="product.dilicom_url"  class="card-img-top" t-att-src="product.dilicom_url" alt="Product Image"/>
+                                                <img t-else="" class="card-img-top" t-att-src="'data:image/png;base64,%s' % product.image_1920" alt="Product Image"/>
+                                            </a>
+                                            <div class="card-body">
+                                                <h4 class="card-title">
+                                                    <a t-att-href="product.website_url"><t t-esc="product.name"/></a>
+                                                </h4>
+                                                <p class="card-text">
+                                                    <t t-if="product.description_sale">
+                                                        <t t-esc="product.description_sale"/>
+                                                    </t>
+                                                </p>
+                                                <div class="product_price">
+                                                    <span t-field="product.list_price" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                </div>
+                                            </div>
+                                            <div class="card-footer">
+                                                <input name="product_id" t-att-value="product.product_variant_id.id" type="hidden"/>
+                                                <a t-att-href="product.website_url" class="btn btn-secondary">View Details</a>
+                                                <button type="submit" class="btn btn-primary">
+                                                    <t t-if="today > office.date_limit">Add to Cart</t>
+                                                    <t t-else="">Add to Office Order</t>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </t>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <t t-call="website.pager"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <div class="oe_structure"/>
+            </div>
+        </t>
+    </template>
+</odoo>

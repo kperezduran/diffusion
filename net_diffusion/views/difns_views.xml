@@ -1,0 +1,127 @@
+<odoo>
+
+    <record id="view_bdl_editor_form" model="ir.ui.view">
+        <field name="name">bdl.editor.form</field>
+        <field name="model">bdl.editor</field>
+        <field name="arch" type="xml">
+            <form string="Éditeur">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                    <group>
+
+                    </group>
+                    <notebook>
+                        <page name="Produits">
+                            <field name="product_line_ids" editable="bottom">
+                                <tree>
+                                    <field name="editor_id" invisible="1"/>
+                                    <field name="product_id"/>
+                                    <field name="export_dilicom"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_bdl_editor_tree" model="ir.ui.view">
+        <field name="name">bdl.editor.tree</field>
+        <field name="model">bdl.editor</field>
+        <field name="arch" type="xml">
+            <tree string="Éditeur">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_bdl_editor_search" model="ir.ui.view">
+        <field name="name">bdl.editor.search</field>
+        <field name="model">bdl.editor</field>
+        <field name="arch" type="xml">
+            <search string="Éditeur">
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_bdl_editor_form" model="ir.actions.act_window">
+        <field name="name">Éditeurs BDL</field>
+        <field name="res_model">bdl.editor</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="view_bdl_supplier_form" model="ir.ui.view">
+        <field name="name">bdl.supplier.form</field>
+        <field name="model">bdl.supplier</field>
+        <field name="arch" type="xml">
+            <form string="Fournisseur BDL">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="gencode"/>
+                    </group>
+                    <group>
+
+                    </group>
+                    <notebook>
+                        <page name="Produits">
+                            <field name="product_ids"/>
+                        </page>
+                        <page name="Editeurs">
+                            <field name="editor_ids"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_bdl_supplier_tree" model="ir.ui.view">
+        <field name="name">bdl.supplier.tree</field>
+        <field name="model">bdl.supplier</field>
+        <field name="arch" type="xml">
+            <tree string="Fournisseur BDL">
+                <field name="name"/>
+                <field name="gencode"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_bdl_supplier_search" model="ir.ui.view">
+        <field name="name">bdl.supplier.search</field>
+        <field name="model">bdl.supplier</field>
+        <field name="arch" type="xml">
+            <search string="Fournisseur BDL">
+                <field name="name"/>
+                <field name="gencode"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_bdl_supplier_form" model="ir.actions.act_window">
+        <field name="name">Fournisseurs BDL</field>
+        <field name="res_model">bdl.supplier</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <record id="action_import_octave" model="ir.actions.act_window">
+        <field name="name">Importation Octave</field>
+        <field name="res_model">wizard.import_octave</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+
+    <menuitem name="Gestion Diffusion" id="difns_main" sequence="1"/>
+
+    <menuitem name="BDL" id="bdl_main" parent="difns_main" sequence="1"/>
+    <menuitem id="editor_bdl_menu" name="Éditeurs" parent="bdl_main" sequence="999" action="action_bdl_editor_form"/>
+    <menuitem id="supplier_bdl_menu" name="Fournisseurs" parent="bdl_main" sequence="999"
+              action="action_bdl_supplier_form"/>
+    <menuitem id="octave_import" name="Importation Octave" parent="bdl_main" sequence="999"
+              action="action_import_octave"/>
+
+</odoo>

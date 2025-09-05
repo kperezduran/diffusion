@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="diffusion_view_picking_form" model="ir.ui.view">
+            <field name="name">diffusion.stock.picking.form</field>
+            <field name="model">stock.picking</field>
+            <field name="priority">5</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='do_print_picking']" position="inside">
+                    <button name="do_print_picking" string="Imprimer Picking" groups="stock.group_stock_user" type="object" invisible="state != 'assigned'" data-hotkey="o"/>
+                </xpath>
+                <xpath expr="//button[@name='336']" position="inside">
+                    <button name="336" string="Imprimer Bon" invisible="state != 'done'" type="action" groups="base.group_user" data-hotkey="o"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sale_report_wizard_form" model="ir.ui.view">
+        <field name="name">sale.report.wizard.form</field>
+        <field name="model">sale.report.wizard2</field>
+        <field name="arch" type="xml">
+            <form string="Generate Report">
+                <group>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <field name="report_type"/>
+                </group>
+                <group>
+                    <field name="fichier" invisible="not fichier"/>
+                </group>
+                <footer>
+                    <button name="action_generate_report" string="Generate" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_open_sale_report_wizard" model="ir.actions.act_window">
+        <field name="name">Sales / Credit Report</field>
+        <field name="res_model">sale.report.wizard2</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_sale_report_wizard"
+              name="Sales Report Wizard"
+              parent="net_diffusion.difns_main"
+              action="action_open_sale_report_wizard"/>
+
+        <record id="action_invoice_update_compute" model="ir.actions.act_window">
+            <field name="name">Run Update Invoice</field>
+            <field name="res_model">account.compute_update</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem action="action_invoice_update_compute" id="menu_invoice_update_compute" parent="sale.sale_order_menu" sequence="135"/>
+
+</odoo>

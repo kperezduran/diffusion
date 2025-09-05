@@ -1,0 +1,60 @@
+th.o_section_and_note_text_cell[data-name='name'], td.o_field_section_and_note_text[name='name']   {
+    max-width: 300px !important;
+    width: 300px !important;
+}
+div[name="move_ids_without_package"] th.align-middle.o_column_sortable.position-relative.cursor-pointer.opacity-trigger-hover[data-name='product_id'],
+div[name="move_ids_without_package"] td.o_data_cell.cursor-pointer.o_field_cell.o_list_many2one.o_required_modifier.o_readonly_modifier[name='product_id']
+{
+    max-width: 580px !important;
+    width: 580px !important;
+}
+th.o_sol_product_many2one_cell[data-name='product_template_id'], th.o_sol_product_many2one_cell[data-name='product_template_id'] {
+    max-width: 110px !important;
+    width: 110px !important;
+}
+th.o_list_many2one[data-name='product_id'], td.o_list_many2one[name='product_id'] {
+    max-width: 110px !important;
+    width: 110px !important;
+}
+td.o_many2many_tags_cell[name='tax_ids'],
+th.o_many2many_tags_cell[data-name='tax_ids'] {
+    max-width: 50px !important;
+    width: 50px !important;
+}
+td.o_field_cell[name='barcode'],
+th.o_field_cell[data-name='barcode'] {
+    max-width: 135px !important;
+    width: 135px !important;
+}
+td.o_field_cell[name='quantity'],
+th.o_field_cell[data-name='quantity'],
+td.o_field_cell[name='product_uom_qty'],
+th.o_field_cell[data-name='product_uom_qty'] {
+    max-width: 135px !important;
+    width: 135px !important;
+}
+td.o_many2many_tags_cell[name='tax_id'],
+th.o_many2many_tags_cell[data-name='tax_id'] {
+    max-width: 50px !important;
+    width: 50px !important;
+}
+th.o_many2many_tags_cell[name='taxes_id'],
+td.o_many2many_tags_cell[data-name='taxes_id'] {
+    max-width: 50px !important;
+    width: 50px !important;
+}
+td.o_many2one_barcode_cell[name='product_id'],
+th.o_many2one_barcode_cell[data-name='product_id'] {
+    max-width: 100px !important;
+    width: 100px !important;
+}
+td.o_many2one_barcode_cell[name='discount'],
+th.o_many2one_barcode_cell[data-name='discount'] {
+    max-width: 50px !important;
+    width: 50px !important;
+}
+td.o_many2one_barcode_cell[name='supplier'],
+th.o_many2one_barcode_cell[data-name='supplier'] {
+    max-width: 75px !important;
+    width: 75px !important;
+}

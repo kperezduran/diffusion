@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Office Form View -->
+    <record id="view_diffusion_office_form" model="ir.ui.view">
+        <field name="name">diffusion.office.form</field>
+        <field name="model">diffusion.office</field>
+        <field name="arch" type="xml">
+            <form string="Office">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="website_publish_button" type="object" class="oe_stat_button" icon="fa-globe">
+                            <field name="is_published" widget="website_publish_button"/>
+                        </button>
+                        <button name="generate_products" type="object" class="oe_stat_button" icon="fa-refresh" 
+                                string="Generate Products" help="Generate products with code_disponibility = 2"/>
+                        <button name="action_view_products" type="object" class="oe_stat_button" icon="fa-cubes">
+                            <field name="product_count" widget="statinfo" string="Products"/>
+                        </button>
+                    </div>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Office Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="theme_id"/>
+                            <field name="website_id" options="{'no_create': True}" groups="website.group_multi_website"/>
+                        </group>
+                        <group>
+                            <field name="date_limit"/>
+                            <field name="delivery_date"/>
+                            <field name="scan_barcode"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Products" name="products">
+                            <field name="product_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="default_code"/>
+                                    <field name="code_disponibility"/>
+                                    <field name="list_price"/>
+                                    <field name="qty_available"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="SEO" name="seo">
+                            <group name="seo">
+                                <field name="website_meta_title"/>
+                                <field name="website_meta_description"/>
+                                <field name="website_meta_keywords"/>
+                                <field name="website_meta_og_img"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Office Tree View -->
+    <record id="view_diffusion_office_tree" model="ir.ui.view">
+        <field name="name">diffusion.office.tree</field>
+        <field name="model">diffusion.office</field>
+        <field name="arch" type="xml">
+            <tree string="Offices">
+                <field name="name"/>
+                <field name="theme_id"/>
+                <field name="date_limit"/>
+                <field name="delivery_date"/>
+                <field name="product_count"/>
+                <field name="is_published" widget="boolean_toggle"/>
+                <field name="website_id" groups="website.group_multi_website"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Office Search View -->
+    <record id="view_diffusion_office_search" model="ir.ui.view">
+        <field name="name">diffusion.office.search</field>
+        <field name="model">diffusion.office</field>
+        <field name="arch" type="xml">
+            <search string="Search Offices">
+                <field name="name"/>
+                <field name="theme_id"/>
+                <filter string="Published" name="published" domain="[('is_published', '=', True)]"/>
+                <filter string="Unpublished" name="unpublished" domain="[('is_published', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Theme" name="theme" context="{'group_by': 'theme_id'}"/>
+                    <filter string="Website" name="website" context="{'group_by': 'website_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Office Action Window -->
+    <record id="action_diffusion_office" model="ir.actions.act_window">
+        <field name="name">Offices</field>
+        <field name="res_model">diffusion.office</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_diffusion_office_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new office
+            </p>
+            <p>
+                Offices allow you to organize products by theme and generate products with dilicom_code = 2.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="menu_diffusion_office_root" name="Offices" sequence="10"/>
+    
+    <menuitem id="menu_diffusion_office" name="Offices" parent="menu_diffusion_office_root" action="action_diffusion_office" sequence="10"/>
+
+</odoo>

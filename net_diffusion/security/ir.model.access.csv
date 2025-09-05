@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_wizard_xlsx_public,access_wizard_xlsx_public,model_wizard_import_xlsx_order,,1,1,1,1
+access_wizard_octave_public,access_wizard_octave_public,model_wizard_import_octave,,1,1,1,1
+access_octave_public,access_octave_public,model_import_octave,,1,1,1,1
+access_website_an_slider_products_public,access_website_an_slider_products_public,model_website_an_slider_products,,1,1,1,1
+access_website_an_slider_product_public,access_website_an_slider_product_public,model_website_an_slider_product,,1,1,1,1
+access_website_an_slider_category_public,access_website_an_slider_category_public,model_website_an_slider_category,,1,1,1,1
+access_product_tag_category_public,access_product_tag_category,model_product_tag_category,,1,1,1,1
+access_bdl_editor_public,access_bdl_editor,model_bdl_editor,,1,1,1,1
+access_bdl_editor_line_public,access_bdl_editor_line,model_bdl_editor_line,,1,1,1,1
+access_bdl_supplier_public,access_bdl_supplier,model_bdl_supplier,,1,1,1,1
+access_stock_warehouse_orderpointinfo_public,access_stock_warehouse_orderpointinfo,model_stock_warehouse_orderpointinfo,,1,1,1,1
+access_sale_compute_update_public,access_sale_compute_update,model_sale_compute_update,,1,1,1,1
+access_website_net_slider_injection_public,access_website_net_slider_injection_public,model_website_net_slider_injection,,1,1,1,1
+

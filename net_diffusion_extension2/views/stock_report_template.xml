@@ -1,0 +1,35 @@
+<odoo>
+    <template id="stock_page_template" name="Stock Page Template">
+        <t t-foreach="grouped_data" t-as="group">
+            <h2>
+                Operation Type: <t t-esc="group.picking_type.name"/> |
+                Warehouse: <t t-esc="group.warehouse.name"/>
+            </h2>
+            <table border="1" cellspacing="0" cellpadding="4">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>EAN</th>
+                        <th>Editeur</th>
+                        <th>Date Parution</th>
+                        <th>Supplier</th>
+                        <th>Total Qty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="group.products" t-as="pdata">
+                        <tr>
+                            <td><t t-esc="pdata.product.display_name"/></td>
+                            <td><t t-esc="pdata.product.barcode or ''"/></td>
+                            <td><t t-esc="pdata.product.editeur or ''"/></td>
+                            <td><t t-esc="pdata.product.date_parution or ''"/></td>
+                            <td><t t-esc="pdata.supplier.name if pdata.supplier else ''"/></td>
+                            <td><t t-esc="pdata.qty"/></td>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+            <br/>
+        </t>
+    </template>
+</odoo>

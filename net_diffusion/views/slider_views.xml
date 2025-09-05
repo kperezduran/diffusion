@@ -1,0 +1,124 @@
+<odoo>
+  <data>
+
+
+        <record id="menu_an_slider_category_form_view" model="ir.ui.view">
+            <field name="name">website.an_slider_category.form</field>
+            <field name="model">website.an_slider_category</field>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group name="Information">
+                            <group string="Shop">
+                                <field name="name"/>
+                                <field name="slider_product_ids" widget="many2many_tags"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="menu_an_slider_category_tree_view" model="ir.ui.view">
+            <field name="name">website.an_slider_category.tree</field>
+            <field name="model">website.an_slider_category</field>
+            <field name="arch" type="xml">
+                <tree string="Slider's Category">
+                    <field name="name"/>
+                    <field name="slider_product_ids" widget="many2many_tags"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="menu_an_slider_category_action" model="ir.actions.act_window">
+            <field name="name">Website Sliders Category</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">website.an_slider_category</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="menu_an_slider_category_tree_view"/>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Add a new slider category
+              </p>
+            </field>
+        </record>
+
+        <record id="menu_an_slider_products_form_view" model="ir.ui.view">
+            <field name="name">website.an_slider_products.form</field>
+            <field name="model">website.an_slider_products</field>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group name="Information">
+                            <group string="Shop">
+                                <field name="name"/>
+                                <field name="title"/>
+                                <field name="slider_text"/>
+                                <field name="publish"/>
+                                <field name="website_sequence"/>
+                                <field name="date_from"/>
+                                <field name="categ_id"/>
+                                <field name="date_to"/>
+                                <field name="language_ids" widget="many2many_tags"/>
+                                <field name="website_ids" widget="many2many_tags"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Produits">
+                                <field name="slider_product_ids" widget="section_and_note_one2many" mode="tree" context="{'slider_id': id}">
+                                    <tree string="Produits" editable="bottom" limit="200">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="product_id" domain="[('active', '=', True),('is_published', '=', True),('type', '=', 'product')]"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="menu_an_slider_products_tree_view" model="ir.ui.view">
+            <field name="name">website.an_slider_products.tree</field>
+            <field name="model">website.an_slider_products</field>
+            <field name="arch" type="xml">
+                <tree string="Sliders">
+                    <field name="website_sequence" widget="handle"/>
+                    <field name="name"/>
+                    <field name="publish"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="language_ids" widget="many2many_tags"/>
+                    <field name="website_ids" widget="many2many_tags"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="menu_an_slider_products_action" model="ir.actions.act_window">
+            <field name="name">Website Sliders Products</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">website.an_slider_products</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="menu_an_slider_products_tree_view"/>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Add a new slider products
+              </p>
+            </field>
+        </record>
+
+
+    <menuitem id="menu_an_slider_products"
+        name="Sliders Products"
+        action="menu_an_slider_products_action"
+        parent="website_sale.menu_ecommerce"
+        sequence="30"/>
+    <menuitem id="menu_an_slider_category"
+        name="Sliders Category"
+        action="menu_an_slider_category_action"
+        parent="website_sale.menu_ecommerce"
+        sequence="40"/>
+    </data>
+</odoo>

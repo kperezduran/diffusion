@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Office Category Form View -->
+    <record id="view_diffusion_office_category_form" model="ir.ui.view">
+        <field name="name">diffusion.office.category.form</field>
+        <field name="model">diffusion.office.category</field>
+        <field name="arch" type="xml">
+            <form string="Office Category">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="website_publish_button" type="object" class="oe_stat_button" icon="fa-globe">
+                            <field name="is_published" widget="website_publish_button"/>
+                        </button>
+                        <button name="action_view_offices" type="object" class="oe_stat_button" icon="fa-building-o">
+                            <field name="office_count" widget="statinfo" string="Offices"/>
+                        </button>
+                        <button name="action_view_products" type="object" class="oe_stat_button" icon="fa-cubes">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Products</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Category Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="product_category_id"/>
+                            <field name="website_id" options="{'no_create': True}" groups="website.group_multi_website"/>
+                        </group>
+                        <group>
+                            <field name="description"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Offices" name="offices">
+                            <field name="office_ids" readonly="1">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="date_limit"/>
+                                    <field name="delivery_date"/>
+                                    <field name="product_count"/>
+                                    <field name="is_published" widget="boolean_toggle"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Office Category Tree View -->
+    <record id="view_diffusion_office_category_tree" model="ir.ui.view">
+        <field name="name">diffusion.office.category.tree</field>
+        <field name="model">diffusion.office.category</field>
+        <field name="arch" type="xml">
+            <tree string="Office Categories">
+                <field name="name"/>
+                <field name="product_category_id"/>
+                <field name="office_count"/>
+                <field name="is_published" widget="boolean_toggle"/>
+                <field name="website_id" groups="website.group_multi_website"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Office Category Search View -->
+    <record id="view_diffusion_office_category_search" model="ir.ui.view">
+        <field name="name">diffusion.office.category.search</field>
+        <field name="model">diffusion.office.category</field>
+        <field name="arch" type="xml">
+            <search string="Search Office Categories">
+                <field name="name"/>
+                <field name="product_category_id"/>
+                <filter string="Published" name="published" domain="[('is_published', '=', True)]"/>
+                <filter string="Unpublished" name="unpublished" domain="[('is_published', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Product Category" name="product_category" context="{'group_by': 'product_category_id'}"/>
+                    <filter string="Website" name="website" context="{'group_by': 'website_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Office Category Action Window -->
+    <record id="action_diffusion_office_category" model="ir.actions.act_window">
+        <field name="name">Office Categories</field>
+        <field name="res_model">diffusion.office.category</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_diffusion_office_category_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new office category
+            </p>
+            <p>
+                Office categories link to product categories and are used as themes for offices.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Items -->
+</odoo>

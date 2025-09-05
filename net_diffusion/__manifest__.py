@@ -1,0 +1,48 @@
+# -*- coding: utf-8 -*-
+{
+    'name': 'NET-EASY Diffusion Extension',
+    'category': 'Website/Website',
+    'sequence': 200,
+    'website': '',
+    'summary': '',
+    'version': '1.0',
+    'description': "",
+    'depends': ['website_event_sale', 'website_sale', 'stock', 'purchase'],
+    'application': True,
+    'license': 'LGPL-3',
+    'data': [
+        'views/sale_order.xml',
+        'views/res_partner.xml',
+        'views/product_template.xml',
+        'views/stock_picking.xml',
+        'views/picking_report.xml',
+        'views/stock_orderpoint.xml',
+        'views/website_templates.xml',
+        'wizard/wizard_views.xml',
+        'views/slider_template.xml',
+        'views/difns_views.xml',
+        'views/slider_views.xml',
+        'views/catalogue_template.xml',
+        'views/net_slider_views.xml',
+        'views/net_slider_templates.xml',
+        'wizard/update_sale_order_views.xml',
+        'security/ir.model.access.csv',
+    ],
+    'assets': {
+
+        'web.assets_backend': [
+            'net_diffusion/static/src/css/backend_invoice.css',
+        ],
+        'web.assets_frontend': [
+            'net_diffusion/static/src/css/custom.css',
+            'net_diffusion/static/src/js/diffusion.js',
+            'net_diffusion/static/lib/swiperjs/swiper-bundle.css',
+            'net_diffusion/static/lib/swiperjs/swiper-bundle.min.js',
+            'net_diffusion/static/src/js/net_slider_loader.js',
+            'net_diffusion/static/src/xml/ajax_template.xml',
+            'net_diffusion/static/src/xml/catalogue_ajax.xml',
+            'net_diffusion/static/src/css/catalogue.css',
+            'net_diffusion/static/src/js/catalogue.js',
+        ],
+    },
+}

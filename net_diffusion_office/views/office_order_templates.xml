@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Office Cart Template -->
+    <template id="office_cart" name="Office Cart">
+        <t t-call="website.layout">
+            <div id="wrap" class="js_office_cart">
+                <div class="oe_structure"/>
+                <section class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h1 class="text-center">Your Office Orders</h1>
+                            <div class="oe_structure"/>
+                        </div>
+                    </div>
+                    
+                    <t t-if="not orders or all(not order.order_line_ids for order in orders)">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="alert alert-info">
+                                    <p class="text-center">Your office order cart is empty.</p>
+                                    <p class="text-center">
+                                        <a href="/offices" class="btn btn-primary">Continue Shopping</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                    
+                    <t t-foreach="orders" t-as="order">
+                        <t t-if="order.order_line_ids">
+                            <div class="row mt-4">
+                                <div class="col-lg-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h4>
+                                                Order <t t-esc="order.name"/> - <t t-esc="order.office_id.name"/>
+                                                <small class="text-muted">
+                                                    (Date Limit: <t t-esc="order.office_id.date_limit"/>)
+                                                </small>
+                                            </h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Product</th>
+                                                            <th class="text-center">Quantity</th>
+                                                            <th class="text-right">Price</th>
+                                                            <th class="text-right">Subtotal</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <t t-foreach="order.order_line_ids" t-as="line">
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="media">
+                                                                        <div class="media-left">
+                                                                            <img t-if="line.product_id.image_128" t-att-src="'data:image/png;base64,%s' % line.product_id.image_128" class="img-fluid" style="max-height: 64px;" alt="Product Image"/>
+                                                                            <img t-if="line.product_id.dilicom_url" t-att-src="line.product_id.dilicom_url" class="img-fluid" style="max-height: 64px;" alt="Product Image"/>
+                                                                            <img t-else="" src="/web/static/src/img/placeholder.png" class="img-fluid" style="max-height: 64px;" alt="Product Image"/>
+                                                                        </div>
+                                                                        <div class="media-body ml-2">
+                                                                            <h5 class="mt-0"><t t-esc="line.product_id.name"/></h5>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <form t-att-action="'/office/cart/update_qty'" method="post" class="js_quantity form-inline justify-content-center">
+                                                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                                        <input type="hidden" name="line_id" t-att-value="line.id"/>
+                                                                        <div class="input-group input-group-sm">
+                                                                            <div class="input-group-prepend">
+                                                                                <button type="button" class="btn btn-secondary js_remove_qty">-</button>
+                                                                            </div>
+                                                                            <input type="text" class="form-control quantity" name="quantity" t-att-value="line.product_uom_qty"/>
+                                                                            <div class="input-group-append">
+                                                                                <button type="button" class="btn btn-secondary js_add_qty">+</button>
+                                                                            </div>
+                                                                        </div>
+                                                                        <button type="submit" class="btn btn-primary btn-sm ml-2">Update</button>
+                                                                    </form>
+                                                                </td>
+                                                                <td class="text-right">
+                                                                    <span t-esc="line.price_unit" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                                </td>
+                                                                <td class="text-right">
+                                                                    <span t-esc="line.price_subtotal" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                                </td>
+                                                                <td class="text-right">
+                                                                    <a t-att-href="'/office/cart/remove?line_id=%s' % line.id" class="btn btn-sm btn-danger">
+                                                                        <i class="fa fa-trash"/> Remove
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <td colspan="3" class="text-right"><strong>Total:</strong></td>
+                                                            <td class="text-right">
+                                                                <strong>
+                                                                    <span t-esc="order.amount_total" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                                </strong>
+                                                            </td>
+                                                            <td></td>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <a href="/offices" class="btn btn-secondary">Continue Shopping</a>
+                                                </div>
+                                                <div class="col-lg-6 text-right">
+                                                    <t t-if="today > order.office_id.date_limit">
+                                                        <div class="alert alert-warning">
+                                                            <p>The date limit for this office has passed. You can no longer modify this order.</p>
+                                                        </div>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <a href="/office/orders" class="btn btn-primary">View All Orders</a>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </t>
+                </section>
+                <div class="oe_structure"/>
+            </div>
+        </t>
+    </template>
+    
+    <!-- Office Orders Template -->
+    <template id="office_orders" name="Office Orders">
+        <t t-call="website.layout">
+            <div id="wrap" class="js_office_orders">
+                <div class="oe_structure"/>
+                <section class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h1 class="text-center">Your Office Orders</h1>
+                            <div class="oe_structure"/>
+                        </div>
+                    </div>
+                    
+                    <t t-if="not orders">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="alert alert-info">
+                                    <p class="text-center">You have no office orders.</p>
+                                    <p class="text-center">
+                                        <a href="/offices" class="btn btn-primary">Continue Shopping</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                    
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Order Reference</th>
+                                            <th>Office</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th class="text-right">Total</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="orders" t-as="order">
+                                            <tr>
+                                                <td><t t-esc="order.name"/></td>
+                                                <td><t t-esc="order.office_id.name"/></td>
+                                                <td><t t-esc="order.date_order" t-options="{'widget': 'date'}"/></td>
+                                                <td>
+                                                    <span t-if="order.state == 'draft'" class="badge badge-info">Draft</span>
+                                                    <span t-elif="order.state == 'confirmed'" class="badge badge-primary">Confirmed</span>
+                                                    <span t-elif="order.state == 'done'" class="badge badge-success">Done</span>
+                                                    <span t-elif="order.state == 'cancel'" class="badge badge-danger">Cancelled</span>
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-esc="order.amount_total" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                </td>
+                                                <td class="text-right">
+                                                    <a t-if="order.state == 'draft'" t-att-href="'/office/cart?order_id=%s' % order.id" class="btn btn-sm btn-primary">
+                                                        View Cart
+                                                    </a>
+                                                    <button t-else="" class="btn btn-sm btn-secondary" disabled="disabled">
+                                                        View Details
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-lg-12 text-center">
+                            <a href="/offices" class="btn btn-primary">Continue Shopping</a>
+                        </div>
+                    </div>
+                </section>
+                <div class="oe_structure"/>
+            </div>
+        </t>
+    </template>
+    
+    <!-- JavaScript for quantity buttons -->
+<!--    <template id="assets_frontend" inherit_id="website.assets_frontend" name="Office Order Cart JS Assets">-->
+<!--        <xpath expr="." position="inside">-->
+<!--            <script type="text/javascript">-->
+<!--// Vanilla JS version (no jQuery)-->
+<!--document.addEventListener("DOMContentLoaded", () => {-->
+<!--  document.body.addEventListener("click", (ev) => {-->
+<!--    const addBtn = ev.target.closest(".js_add_qty");-->
+<!--    const removeBtn = ev.target.closest(".js_remove_qty");-->
+
+<!--    if (addBtn) {-->
+<!--      const input = addBtn.closest(".input-group")?.querySelector(".quantity");-->
+<!--      if (input) {-->
+<!--        const currentVal = parseFloat(input.value || "0");-->
+<!--        if (!Number.isNaN(currentVal)) input.value = String(currentVal + 1);-->
+<!--      }-->
+<!--    }-->
+
+<!--    if (removeBtn) {-->
+<!--      const input = removeBtn.closest(".input-group")?.querySelector(".quantity");-->
+<!--      if (input) {-->
+<!--        const currentVal = parseFloat(input.value || "0");-->
+<!--        if (!Number.isNaN(currentVal) &amp;&amp; currentVal > 1) {-->
+<!--          input.value = String(currentVal - 1);-->
+<!--        }-->
+<!--      }-->
+<!--    }-->
+<!--  });-->
+<!--});-->
+<!--            </script>-->
+<!--        </xpath>-->
+<!--    </template>-->
+</odoo>

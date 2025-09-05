@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="diffusion_res_partner_form_view" model="ir.ui.view">
+        <field name="name">diffusion.res.partner.form.view</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="priority" eval="3"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="gencode" invisible="not is_company"/>
+                <field name="bob_ref" invisible="not is_company"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

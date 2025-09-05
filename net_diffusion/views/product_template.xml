@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="product_template_diffusion_form_view" model="ir.ui.view">
+            <field name="name">diffusion.product.template.form.inherit</field>
+            <field name="model">product.template</field>
+            <field name="priority">5</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='group_standard_price']" position="after">
+                    <group name="dilicom_infos" string="Information Dilicom">
+                        <field name="date_parution"/>
+                        <field name="auteur"/>
+                        <field name="editeur"/>
+                        <field name="dilicom_categ"/>
+                        <field name="code_disponibility"/>
+                        <field name="code_impression"/>
+                        <field name="collection"/>
+                        <field name="nbr_page"/>
+                        <field name="type_livre"/>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='image_1920']" position="replace">
+                    <field name="image_1920" invisible="1" widget="image" class="oe_avatar"
+                           options="{'preview_image': 'image_128'}"/>
+                    <field name="dilicom_url" invisible="1"/>
+                    <field name="dilicom_url_thumb" invisible="1"/>
+                    <field name="image_preview" class="oe_avatar"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="product_template_diffusion_kanban_view" model="ir.ui.view">
+            <field name="name">diffusion.product.product_template_kanban_view</field>
+            <field name="model">product.template</field>
+            <field name="priority">5</field>
+            <field name="inherit_id" ref="product.product_template_kanban_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//kanban" position="inside">
+                    <field name="dilicom_url"/>
+                    <field name="dilicom_url_thumb"/>
+                </xpath>
+                <xpath expr="//img[hasclass('o_image_64_contain')]" position="replace">
+                        <img t-att-src="record.dilicom_url_thumb.value" alt="Product" class="o_image_64_contain"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="product_template_diffusion_search_view" model="ir.ui.view">
+            <field name="name">diffusion.product.template.search</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_search_view"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="auteur" string="Auteur" filter_domain="[('auteur', 'ilike', self)]"/>
+                    <field name="editeur" string="Editeur" filter_domain="[('editeur', 'ilike', self)]"/>
+                    <field name="dilicom_categ" string="Catégorie Dilicom"
+                           filter_domain="[('dilicom_categ', 'ilike', self)]"/>
+                    <field name="date_parution" string="Date de parution"
+                           filter_domain="[('date_parution', 'ilike', self)]"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>

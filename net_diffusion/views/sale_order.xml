@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_sale_order_xlsx_wizard_form" model="ir.ui.view">
+            <field name="name">sale.order.xlsx.wizard.form</field>
+            <field name="model">sale.order.xlsx.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Download XLSX">
+                    <group>
+                        <field name="file_name" readonly="1"/>
+                        <field name="file_data" readonly="1"/>
+                    </group>
+                    <footer>
+                        <button string="Download"
+                                type="object"
+                                name="download_file"
+                                class="btn-primary"/>
+                        <button string="Close"
+                                class="btn-secondary"
+                                special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="diffusion_view_sale_order_form" model="ir.ui.view">
+            <field name="name">diffusion.sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="priority">5</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+
+                    <button name="download_picking_xlsx"
+                            string="Télécharger XLSX"
+                            type="object"
+                            class="btn-primary"/>
+                    <button name="open_import_xls" string="Importer XLSX" class="oe_highlight" type="object"
+                            invisible="state != 'draft'"/>
+                    <button name="open_import_ods" string="Importer ODS" class="oe_highlight" type="object"
+                            invisible="state != 'draft'"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

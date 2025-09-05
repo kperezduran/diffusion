@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_diffusion_office_order_tree" model="ir.ui.view">
+        <field name="name">diffusion.office.order.tree</field>
+        <field name="model">diffusion.office.order</field>
+        <field name="arch" type="xml">
+            <tree string="Office Orders" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" decoration-success="state == 'done'">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="office_id"/>
+                <field name="date_order"/>
+                <field name="amount_total" sum="Total"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_diffusion_office_order_form" model="ir.ui.view">
+        <field name="name">diffusion.office.order.form</field>
+        <field name="model">diffusion.office.order</field>
+        <field name="arch" type="xml">
+            <form string="Office Order">
+                <header>
+                    <button name="action_confirm" string="Confirm" type="object" class="btn-primary" invisible="[('state', '!=', 'draft')]"/>
+                    <button name="action_done" string="Mark as Done" type="object" class="btn-primary" invisible="[('state', '!=', 'confirmed')]"/>
+                    <button name="action_cancel" string="Cancel" type="object" invisible="[('state', 'not in', ['draft', 'confirmed'])]"/>
+                    <button name="action_draft" string="Set to Draft" type="object" invisible="[('state', '!=', 'cancel')]"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="office_id"/>
+                        </group>
+                        <group>
+                            <field name="date_order"/>
+                            <field name="amount_total"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Order Lines">
+                            <field name="order_line_ids">
+                                <tree string="Order Lines" editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="product_uom_qty"/>
+                                    <field name="price_unit"/>
+                                    <field name="price_subtotal" sum="Subtotal"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_diffusion_office_order_search" model="ir.ui.view">
+        <field name="name">diffusion.office.order.search</field>
+        <field name="model">diffusion.office.order</field>
+        <field name="arch" type="xml">
+            <search string="Search Office Orders">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="office_id"/>
+                <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                <filter string="Confirmed" name="confirmed" domain="[('state','=','confirmed')]"/>
+                <filter string="Done" name="done" domain="[('state','=','done')]"/>
+                <filter string="Cancelled" name="cancel" domain="[('state','=','cancel')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Customer" name="customer" context="{'group_by':'partner_id'}"/>
+                    <filter string="Office" name="office" context="{'group_by':'office_id'}"/>
+                    <filter string="Status" name="status" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_diffusion_office_order" model="ir.actions.act_window">
+        <field name="name">Office Orders</field>
+        <field name="res_model">diffusion.office.order</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_diffusion_office_order_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first office order
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_diffusion_office_order" name="Office Orders" parent="menu_diffusion_office_root" action="action_diffusion_office_order" sequence="20"/>
+</odoo>
