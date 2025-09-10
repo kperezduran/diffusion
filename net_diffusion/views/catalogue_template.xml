@@ -3,45 +3,41 @@
     <template id="catalogue_page_template" name="Page Catalogue">
         <t t-call="website.layout">
             <t t-set="pageName" t-value="'catalogue_page oe_website_sale'"/>
-            <div class="catalogue_container catalogue_page">
+            <div class="catalogue_container">
                 <div class="catalogue_search_container">
                     <div class="catalogue_search_title">
                         <span class="catalogue_search_label">Titre:</span>
                         <input type="text" name="title" placeholder="Titre du livre"/>
                     </div>
                     <div class="catalogue_search_author">
+
                         <span class="catalogue_search_label">Auteur:</span>
                         <input type="text" name="editor" placeholder="Auteur"/>
                     </div>
                     <div class="catalogue_search_editor">
+
                         <span class="catalogue_search_label">Éditeur:</span>
                         <input type="text" name="author" placeholder="Éditeur"/>
                     </div>
                     <div class="catalogue_search_collection">
+
                         <span class="catalogue_search_label">Collection:</span>
                         <input type="text" name="collection" placeholder="Collection"/>
                     </div>
                     <div class="catalogue_search_ean">
+
                         <span class="catalogue_search_label">EAN 13:</span>
                         <input type="text" name="ean" placeholder="EAN 13"/>
                     </div>
-                    <div class="catalogue_search_dates">
-                        <span class="catalogue_search_label">Date de parution:</span>
-                        <input type="date" name="date_from" placeholder="Du"/>
-                        <input type="date" name="date_to" placeholder="Au"/>
-                    </div>
-                    <div class="catalogue_search_dispo">
-                        <span class="catalogue_search_label">Disponibilité:</span>
+                    <div class="catalogue_search_ean">
+
+                        <span class="catalogue_search_label">Disponilité:</span>
                         <select name="disponility">
                             <option value=""/>
                             <t t-foreach="disponibilities" t-as="disponiblity">
                                 <option t-att-value="disponiblity.id"><span t-out="disponiblity.name"/></option>
                             </t>
                         </select>
-                    </div>
-                    <div class="catalogue_search_categories">
-                        <span class="catalogue_search_label">Catégorie publique:</span>
-                        <div id="catalogue_category_tree"></div>
                     </div>
                     <div class="catalogue_submit_button btn btn-primary">
                         <span>RECHERCHER</span>
@@ -51,7 +47,9 @@
                     </a>
                 </div>
                 <div class="catalogue_products_container">
+
                 </div>
+
             </div>
         </t>
     </template>

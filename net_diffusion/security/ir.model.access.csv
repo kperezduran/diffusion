@@ -11,5 +11,4 @@ access_bdl_editor_line_public,access_bdl_editor_line,model_bdl_editor_line,,1,1,
 access_bdl_supplier_public,access_bdl_supplier,model_bdl_supplier,,1,1,1,1
 access_stock_warehouse_orderpointinfo_public,access_stock_warehouse_orderpointinfo,model_stock_warehouse_orderpointinfo,,1,1,1,1
 access_sale_compute_update_public,access_sale_compute_update,model_sale_compute_update,,1,1,1,1
-access_website_net_slider_injection_public,access_website_net_slider_injection_public,model_website_net_slider_injection,,1,1,1,1
 

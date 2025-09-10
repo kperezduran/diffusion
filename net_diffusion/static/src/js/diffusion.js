@@ -39,11 +39,10 @@ publicWidget.registry.websiteSaleTags = publicWidget.Widget.extend({
                 'search': search,
             });
             if (result && tag_list.outerHTML) {
-                var newHTML = $(renderToElement('net_diffusion.tags_editeur_filter', {
+                const newEl = renderToElement('net_diffusion.tags_editeur_filter', {
                     items: result,
-                }));
-
-                tag_list.outerHTML = newHTML[0].outerHTML;
+                });
+                tag_list.outerHTML = newEl.outerHTML;
             }
         }
     },

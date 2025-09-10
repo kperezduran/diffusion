@@ -16,9 +16,8 @@ class InvoiceUpdate(models.TransientModel):
                                    INNER JOIN account_move AS so ON sol.move_id = so.id
                                    INNER JOIN product_product AS pp ON sol.product_id = pp.id
                                    INNER JOIN product_template AS pt ON pp.product_tmpl_id = pt.id
-            WHERE sol.price_unit != pt.list_price and so.journal_id = 1 and so.move_type = 'out_invoice'
-              AND so.state = 'draft';
-
+            WHERE sol.price_unit != pt.list_price and so.journal_id = 1 and so.move_type = 'out_invoice' and pt.id not in (4,1586894,1411678,1411679,1411680)
+              AND so.id = 21016 AND so.state = 'draft';
         """
         cr.execute(sql)
         results = cr.dictfetchall()

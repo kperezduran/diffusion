@@ -18,7 +18,7 @@
                 if (window.Swiper) {
                     setTimeout(function(){
                         try{
-                            new Swiper('.net-slider-swiper', {
+                            new Swiper('.mySwiper', {
                                 slidesPerView: 5,
                                 spaceBetween: 16,
                                 navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },

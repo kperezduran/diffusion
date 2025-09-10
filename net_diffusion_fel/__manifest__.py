@@ -18,8 +18,10 @@
     ],
     'assets': {
         'web.assets_frontend': [
+            'net_diffusion/static/lib/swiperjs/swiper-element-bundle.min.js',
             'net_diffusion_fel/static/src/css/catalogue.css',
             'net_diffusion_fel/static/src/js/catalogue.js',
+            'net_diffusion_fel/static/src/js/net_slider_loader.js',
             'net_diffusion_fel/static/src/xml/catalogue_ajax.xml',
         ],
     },

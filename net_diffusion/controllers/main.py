@@ -578,3 +578,71 @@ class ShopCartFast(WebsiteSale):
         # Return the order details or an empty dict if no order exists
         return value
 
+
+    @http.route(['/catalogue'], type='http', auth="user", website=True)
+    def catalogue_page(self):
+        disponibilities = request.env['dr.product.label'].search([])
+
+        return request.render('net_diffusion.catalogue_page_template', {
+            'disponibilities': disponibilities,
+        })
+
+    @http.route(['/catalogue-ajax'], type='json', auth="user", website=True)
+    def catalogue_page_ajax(self, search=None, page=1, limit=50, **post):
+        cr = request.env.cr
+        url = '/catalogue'
+        website = request.env['website'].get_current_website()
+        pricelist = request.env.user.partner_id.property_product_pricelist
+        if not pricelist:
+            pricelist = website.pricelist_id
+        # Use parameterized query to avoid SQL injection, and ensure proper indexing on the queried columns
+        search_query = ""
+        params = []
+        search_domain = [('active', '=', True),('website_published', '=', True)]
+        if post['title']:
+            search_domain += [('name', 'ilike', post['title'])]
+        if post['editeur']:
+            search_domain += [('editeur', 'ilike', post['editeur'])]
+        if post['auteur']:
+            search_domain += [('auteur', 'ilike', post['auteur'])]
+        if post['collection']:
+            search_domain += [('collection', 'ilike', post['collection'])]
+        if post['ean']:
+            search_domain += [('barcode', 'ilike', post['ean'])]
+        if post['disponibility']:
+            search_domain += [('dr_label_id', 'ilike', int(post['disponibility']))]
+
+        products = request.env['product.template'].search(search_domain, limit=50)
+        products_count = request.env['product.template'].search_count(search_domain, limit=50)
+        pager_data = website.pager(url=url, total=products_count, page=page, step=limit)
+        offset = pager_data['offset']
+        products = products[offset:offset + limit]
+        products_data = []
+
+        for product in products:
+            product_variant = request.env['product.product'].search([('product_tmpl_id', '=', product.id)], limit=1)
+            product_price = pricelist._price_get(
+                product,
+                1).get(1)
+            products_data.append({
+                'id': product.id,
+                'variant': product_variant.id if product_variant else None,
+                'name': product.name,
+                'website_url': product.website_url,
+                'editeur': product.editeur,
+                'auteur': product.auteur,
+                'barcode': product.barcode,
+                'collection': product.collection,
+                'price': product_price,
+                'base_price': product.list_price,
+                'description_ecommerce': product.description_ecommerce,
+                'type_livre': product.type_livre,
+                'date_parution': product.date_parution.strftime('%d/%m/%Y'),
+                'dilicom_url': product.dilicom_url,
+                'token': product.dilicom_url,
+                'csrf_token': request.csrf_token(),
+                'disponibility_name': product.dr_label_id.name,
+                'disponibility_color': product.dr_label_id.text_color,
+                'disponibility_color_bck': product.dr_label_id.background_color,
+            })
+        return products_data

@@ -8,62 +8,78 @@
                     <div class="col-12 col-lg-3">
                         <form class="catalogue_search_container fel-filter card shadow-sm p-3">
                             <div class="fel-filter__group">
-                                                            <!-- Basic filters (always visible, especially on mobile) -->
-                                                            <div class="fel-filter__field mb-3">
-                                                                <label class="fel-filter__label form-label fw-semibold">EAN 13</label>
-                                                                <input type="text" class="fel-filter__input form-control" name="ean" placeholder="EAN 13"/>
-                                                            </div>
-                                                            <div class="fel-filter__field mb-3">
-                                                                <label class="fel-filter__label form-label fw-semibold">Titre</label>
-                                                                <input type="text" class="fel-filter__input form-control" name="title" placeholder="Titre du livre"/>
-                                                            </div>
-                                                            <!-- Advanced toggle (visible on mobile) -->
-                                                            <button class="btn btn-link p-0 mb-2 d-inline d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#felAdvancedFilters" aria-expanded="false" aria-controls="felAdvancedFilters">
-                                                                Recherche avancée
-                                                            </button>
-                                                            <!-- Advanced filters collapsible -->
-                                                            <div id="felAdvancedFilters" class="collapse d-md-block">
+                                <!-- Basic filters (always visible, especially on mobile) -->
                                 <div class="fel-filter__field mb-3">
-                                    <label class="fel-filter__label form-label fw-semibold">Auteur</label>
-                                    <input type="text" class="fel-filter__input form-control" name="editor" placeholder="Auteur"/>
+                                    <label class="fel-filter__label form-label fw-semibold">EAN 13</label>
+                                    <input type="text" class="fel-filter__input form-control" name="ean"
+                                           placeholder="EAN 13"/>
                                 </div>
                                 <div class="fel-filter__field mb-3">
-                                    <label class="fel-filter__label form-label fw-semibold">Éditeur</label>
-                                    <input type="text" class="fel-filter__input form-control" name="author" placeholder="Éditeur"/>
+                                    <label class="fel-filter__label form-label fw-semibold">Titre</label>
+                                    <input type="text" class="fel-filter__input form-control" name="title"
+                                           placeholder="Titre du livre"/>
                                 </div>
-                                <div class="fel-filter__field mb-3">
-                                    <label class="fel-filter__label form-label fw-semibold">Collection</label>
-                                    <input type="text" class="fel-filter__input form-control" name="collection" placeholder="Collection"/>
+                                <div class="fel-filter__actions d-flex gap-2">
+                                    <div class="catalogue_submit_button fel-filter__submit btn btn-primary">
+                                        <span>Rechercher</span>
+                                    </div>
+                                    <a href="/catalogue"
+                                       class="fel-filter__reset btn btn-outline-secondary reset_catalogue">
+                                        <span>Réinitialiser</span>
+                                    </a>
                                 </div>
-                                <div class="fel-filter__field mb-3">
-                                    <label class="fel-filter__label form-label fw-semibold">Date de parution</label>
-                                    <input type="text" class="fel-filter__daterange form-control" id="catalogue_date_range" placeholder="Sélectionner une période" autocomplete="off"/>
-                                    <input type="hidden" name="date_from"/>
-                                    <input type="hidden" name="date_to"/>
-                                    <div class="fel-filter__help form-text">Utilisez le sélecteur de plage de dates pour définir une période.</div>
+                                <!-- Advanced toggle (visible on mobile) -->
+                                <button class="btn btn-link p-0 mb-2 d-inline d-md-none" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#felAdvancedFilters"
+                                        aria-expanded="false" aria-controls="felAdvancedFilters">
+                                    Recherche avancée
+                                </button>
+                                <!-- Advanced filters collapsible -->
+                                <div id="felAdvancedFilters" class="collapse d-md-block">
+                                    <div class="fel-filter__field mb-3">
+                                        <label class="fel-filter__label form-label fw-semibold">Auteur</label>
+                                        <input type="text" class="fel-filter__input form-control" name="editor"
+                                               placeholder="Auteur"/>
+                                    </div>
+                                    <div class="fel-filter__field mb-3">
+                                        <label class="fel-filter__label form-label fw-semibold">Éditeur</label>
+                                        <input type="text" class="fel-filter__input form-control" name="author"
+                                               placeholder="Éditeur"/>
+                                    </div>
+                                    <div class="fel-filter__field mb-3">
+                                        <label class="fel-filter__label form-label fw-semibold">Collection</label>
+                                        <input type="text" class="fel-filter__input form-control" name="collection"
+                                               placeholder="Collection"/>
+                                    </div>
+                                    <div class="fel-filter__field mb-3">
+                                        <label class="fel-filter__label form-label fw-semibold">Date de parution</label>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <input type="date" class="fel-filter__input form-control" name="date_from" placeholder="Du"/>
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="date" class="fel-filter__input form-control" name="date_to" placeholder="Au"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="fel-filter__field mb-3">
+                                        <label class="fel-filter__label form-label fw-semibold">Disponibilité</label>
+                                        <select class="fel-filter__select form-select" name="disponility">
+                                            <option value=""></option>
+                                            <t t-foreach="disponibilities" t-as="disponiblity">
+                                                <option t-att-value="disponiblity.id">
+                                                    <t t-esc="disponiblity.name"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="fel-filter__field mb-3">
+                                        <label class="fel-filter__label form-label fw-semibold">Catégorie publique
+                                        </label>
+                                        <div id="catalogue_category_tree"
+                                             class="fel-filter__category-tree border rounded p-2"></div>
+                                    </div>
                                 </div>
-                                <div class="fel-filter__field mb-3">
-                                    <label class="fel-filter__label form-label fw-semibold">Disponibilité</label>
-                                    <select class="fel-filter__select form-select" name="disponility">
-                                        <option value=""></option>
-                                        <t t-foreach="disponibilities" t-as="disponiblity">
-                                            <option t-att-value="disponiblity.id"><t t-esc="disponiblity.name"/></option>
-                                        </t>
-                                    </select>
-                                </div>
-                                <div class="fel-filter__field mb-3">
-                                    <label class="fel-filter__label form-label fw-semibold">Catégorie publique</label>
-                                    <div id="catalogue_category_tree" class="fel-filter__category-tree border rounded p-2"></div>
-                                </div>
-                                </div>
-                            </div>
-                            <div class="fel-filter__actions d-flex gap-2">
-                                <div class="catalogue_submit_button fel-filter__submit btn btn-primary">
-                                    <span>Rechercher</span>
-                                </div>
-                                <a href="/catalogue" class="fel-filter__reset btn btn-outline-secondary reset_catalogue">
-                                    <span>Réinitialiser</span>
-                                </a>
                             </div>
                         </form>
                     </div>

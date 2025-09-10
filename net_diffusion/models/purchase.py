@@ -45,7 +45,7 @@ class PurchaseOrder(models.Model):
             'res_id': self.id,
             'target': 'current',  # Ouvre dans la page courante
         }
-
+    
     def button_confirm(self):
         for order in self:
 

@@ -7,12 +7,12 @@ publicWidget.registry.cataloguePage = publicWidget.Widget.extend({
     events: {
         'click .catalogue_submit_button ': '_searchAjax',
         'keypress .catalogue_search_container input, keypress .catalogue_search_container select': '_onKeyPress',
+        'click .js_add_cart_json': '_onAddToCartClick',
     },
 
     start() {
         this._super(...arguments);
         this._loadCategories();
-        this._initDateRangePicker();
         // Optionally trigger initial search
         // this._searchAjax();
     },
@@ -35,8 +35,6 @@ publicWidget.registry.cataloguePage = publicWidget.Widget.extend({
         }
     },
     _searchAjax: async function () {
-        // ensure date_from/date_to are synced from the date range input if any
-        this._syncDateRangeHiddenFields();
         const title = document.querySelector("input[name='title']").value;
         const auteur = document.querySelector("input[name='editor']").value;
         const editeur = document.querySelector("input[name='author']").value;
@@ -59,99 +57,16 @@ publicWidget.registry.cataloguePage = publicWidget.Widget.extend({
             });
 
             const container = document.querySelector('.catalogue_products_container');
-            const newHTML = $(renderToElement('net_diffusion_fel.products_ajax', {
+            const newEl = renderToElement('net_diffusion_fel.products_ajax', {
                 products: result.products,
-            }));
-            container.outerHTML = newHTML[0].outerHTML;
+            });
+            container.outerHTML = newEl.outerHTML;
 
             // append Load More button if more results
             document.querySelectorAll('.load_more_btn').forEach(b => b.remove());
             if (result.pager && (result.pager.remaining || result.pager.more || (result.pager.total > (result.pager.offset + result.pager.step)))) {
                 this._appendLoadMore(result, payload);
             }
-        }
-    },
-
-    _initDateRangePicker: function () {
-        const input = document.getElementById('catalogue_date_range');
-        if (!input) return;
-        const hiddenFrom = document.querySelector("input[name='date_from']");
-        const hiddenTo = document.querySelector("input[name='date_to']");
-        const updateHidden = (dates) => {
-            if (dates && dates.length) {
-                const fmt = (d) => d.toISOString().slice(0, 10);
-                if (dates.length === 1) {
-                    hiddenFrom.value = fmt(dates[0]);
-                    hiddenTo.value = '';
-                } else {
-                    const [d1, d2] = dates;
-                    const from = d1 <= d2 ? d1 : d2;
-                    const to = d1 <= d2 ? d2 : d1;
-                    hiddenFrom.value = fmt(from);
-                    hiddenTo.value = fmt(to);
-                }
-            } else {
-                hiddenFrom.value = '';
-                hiddenTo.value = '';
-            }
-        };
-        // Try to use flatpickr if available (Odoo 17 uses it in webclient)
-        if (window.flatpickr) {
-            try {
-                window.flatpickr(input, {
-                    mode: 'range',
-                    dateFormat: 'Y-m-d',
-                    allowInput: true,
-                    onChange: function (selectedDates) {
-                        updateHidden(selectedDates);
-                    },
-                });
-                return;
-            } catch (e) {
-                // fallthrough
-            }
-        }
-        // Fallback: basic parser "YYYY-MM-DD to YYYY-MM-DD"
-        input.addEventListener('change', () => this._syncDateRangeHiddenFields());
-    },
-
-    _syncDateRangeHiddenFields: function () {
-        const input = document.getElementById('catalogue_date_range');
-        if (!input) return;
-        const hiddenFrom = document.querySelector("input[name='date_from']");
-        const hiddenTo = document.querySelector("input[name='date_to']");
-        const val = (input.value || '').trim();
-        if (!val) {
-            hiddenFrom.value = '';
-            hiddenTo.value = '';
-            return;
-        }
-        // Try flatpickr selected dates via dataset (if any)
-        if (input._flatpickr && input._flatpickr.selectedDates) {
-            const dates = input._flatpickr.selectedDates;
-            if (dates.length) {
-                const fmt = (d) => d.toISOString().slice(0, 10);
-                if (dates.length === 1) {
-                    hiddenFrom.value = fmt(dates[0]);
-                    hiddenTo.value = '';
-                } else {
-                    const [d1, d2] = dates;
-                    const from = d1 <= d2 ? d1 : d2;
-                    const to = d1 <= d2 ? d2 : d1;
-                    hiddenFrom.value = fmt(from);
-                    hiddenTo.value = fmt(to);
-                }
-                return;
-            }
-        }
-        // Parse text pattern
-        const parts = val.split(/\s+to\s+|\s+-\s+|\s+au\s+/i);
-        if (parts.length === 2) {
-            hiddenFrom.value = parts[0];
-            hiddenTo.value = parts[1];
-        } else {
-            hiddenFrom.value = val;
-            hiddenTo.value = '';
         }
     },
 
@@ -164,8 +79,8 @@ publicWidget.registry.cataloguePage = publicWidget.Widget.extend({
         btn.textContent = 'Charger plus';
         btn.onclick = async () => {
             // next page calculation
-            const nextOffset = (result.pager && result.pager.offset ? result.pager.offset : 0) + (result.pager && result.pager.step ? result.pager.step : (basePayload.limit || 9));
-            const page = Math.floor(nextOffset / (basePayload.limit || 9)) + 1;
+            const nextOffset = (result.pager && result.pager.offset ? result.pager.offset : 0) + (result.pager && result.pager.step ? result.pager.step : (basePayload.limit || 18));
+            const page = Math.floor(nextOffset / (basePayload.limit || 18)) + 1;
             const payload = Object.assign({}, basePayload, {page});
             const resp = await this.rpc('/catalogue-ajax', payload);
             if (resp && resp.products && resp.products.length) {
@@ -281,6 +196,8 @@ publicWidget.registry.cataloguePage = publicWidget.Widget.extend({
             // show children automatically if any
             if (cat.has_children) {
                 this._loadCategories(cat.id);
+                // try to set caret expanded
+                caret.textContent = '▾';
             }
             // trigger search
             this._searchAjax();
@@ -303,5 +220,83 @@ publicWidget.registry.cataloguePage = publicWidget.Widget.extend({
             };
         }
         return li;
-    }
+    },
+
+    _onAddToCartClick: function (ev) {
+        // Do not prevent default; OfficeWidget handles RPC. Just show local popover feedback.
+        const anchor = ev.currentTarget;
+        this._showCartPopover(anchor);
+    },
+
+    _showCartPopover(anchorEl) {
+        try {
+            const anchor = anchorEl instanceof HTMLElement ? anchorEl : null;
+            const card = anchor?.closest('.catalogue_product_item') || anchor?.closest('.card') || document.body;
+            // Build popover container
+            const pop = document.createElement('div');
+            pop.className = 'fel-cart-popover shadow';
+            pop.setAttribute('role', 'status');
+            pop.style.position = 'fixed';
+            pop.style.zIndex = '1080';
+            pop.style.minWidth = '220px';
+            pop.style.maxWidth = '320px';
+            pop.style.background = '#ffffff';
+            pop.style.border = '1px solid rgba(0,0,0,.1)';
+            pop.style.borderRadius = '.5rem';
+            pop.style.padding = '.75rem 1rem';
+            pop.style.boxShadow = '0 .5rem 1rem rgba(0,0,0,.15)';
+            pop.style.opacity = '0';
+            pop.style.transition = 'opacity .15s ease-out, transform .2s ease-out';
+            pop.style.transform = 'translateY(-6px)';
+
+            // Content from card
+            const title = card.querySelector('.catalogue_product_title span,a span')?.textContent || 'Produit';
+            const price = card.querySelector('.catalogue_product_item_price')?.textContent?.trim() || '';
+            pop.innerHTML = `
+                <div class="d-flex align-items-start gap-2">
+                    <div class="flex-grow-1">
+                        <div class="fw-semibold">Ajouté au panier</div>
+                        <div class="small text-muted text-truncate" title="${title}">${title}</div>
+                        ${price ? `<div class="small">Prix: ${price}</div>` : ''}
+                    </div>
+                    <div class="text-primary"><i class="dri dri-cart"></i></div>
+                </div>`;
+
+            document.body.appendChild(pop);
+            // Position near anchor (above-right), fallback if offscreen
+            const rect = anchor?.getBoundingClientRect();
+            const viewportW = window.innerWidth;
+            const viewportH = window.innerHeight;
+            let top = (rect?.top ?? viewportH / 2) - 10;
+            let left = (rect?.right ?? viewportW / 2) - 10;
+            // adjust to keep fully visible
+            const pw = 280; // approx
+            const ph = 120; // approx
+            if (left + pw > viewportW - 10) left = viewportW - pw - 10;
+            if (left < 10) left = 10;
+            if (top + ph > viewportH - 10) top = viewportH - ph - 10;
+            if (top < 10) top = 10;
+            pop.style.top = `${top}px`;
+            pop.style.left = `${left}px`;
+
+            requestAnimationFrame(() => {
+                pop.style.opacity = '1';
+                pop.style.transform = 'translateY(0)';
+            });
+
+            const remove = () => { if (pop.parentNode) pop.parentNode.removeChild(pop); };
+            setTimeout(() => {
+                pop.style.opacity = '0';
+                pop.style.transform = 'translateY(-6px)';
+                setTimeout(remove, 200);
+            }, 2200);
+
+            pop.addEventListener('click', () => {
+                pop.style.opacity = '0';
+                setTimeout(() => { if (pop.parentNode) pop.parentNode.removeChild(pop); }, 150);
+            });
+        } catch (err) {
+            // ignore popover errors
+        }
+    },
 });

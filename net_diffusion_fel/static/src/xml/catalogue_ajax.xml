@@ -69,6 +69,7 @@
                                     </div>
                                 </t>
                             </div>
+                            <t t-if="product.disponibility_id in ['1','2','3',1,2,3]">
                             <form action="/shop/cart/update" method="post" class="js_office">
                                 <div class="text-center text-md-start o_wsale_product_btn mt-3">
                                     <input name="product_id" type="hidden" t-att-value="product.variant"/>
@@ -80,6 +81,7 @@
                                     </a>
                                 </div>
                             </form>
+                            </t>
                         </div>
                     </div>
                 </t>

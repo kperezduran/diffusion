@@ -14,9 +14,87 @@ _logger = logging.getLogger(__name__)
 
 class FELDiffusion(ShopCartFast):
 
-    @http.route(['/catalogue'], type='http', auth="public", website=True)
-    def catalogue_page(self):
-        disponibilities = request.env['dr.product.label'].search([])
+    @http.route('/slider/products', type='json', auth='public', website=True)
+    def slider_products(self, slider_id=None, limit=50, offset=0, **kwargs):
+        """
+        Return product data for a given slider (website.an_slider_products) for public user.
+        This avoids frontend ORM ACL issues by using sudo and returning safe fields only.
+        """
+        if not slider_id:
+            return {'products': [], 'total': 0}
+        # ensure ints
+        try:
+            slider_id = int(slider_id)
+            limit = int(limit or 50)
+            offset = int(offset or 0)
+        except Exception:
+            limit = 50
+            offset = 0
+        env = request.env
+        # Fetch slider lines in order
+        Line = env['website.an_slider_product'].sudo()
+        domain = [('slider_id', '=', slider_id)]
+        total = Line.search_count(domain)
+        lines = Line.search(domain, order='sequence asc, id asc', limit=limit, offset=offset)
+        product_tmpl_ids = [l.product_id.id for l in lines if l.product_id]
+        products = env['product.template'].sudo().browse(product_tmpl_ids).exists()
+
+        # Pricelist for price computation similar to catalogue
+        website = env['website'].get_current_website()
+        pricelist = None
+        try:
+            order = request.website.sale_get_order() if hasattr(request, 'website') else None
+            pricelist = order.pricelist_id if order and getattr(order, 'pricelist_id', False) else None
+        except Exception:
+            pricelist = None
+        if not pricelist:
+            try:
+                if hasattr(request, 'website') and hasattr(request.website, 'get_current_pricelist'):
+                    pricelist = request.website.get_current_pricelist()
+            except Exception:
+                pricelist = None
+        if not pricelist:
+            partner_pl = env.user.partner_id.property_product_pricelist
+            pricelist = partner_pl or (website.pricelist_id if website else None)
+
+        ProductProduct = env['product.product'].sudo()
+        res = []
+        for pt in products:
+            variant = ProductProduct.search([('product_tmpl_id', '=', pt.id)], limit=1)
+            price = pt.list_price
+            try:
+                if pricelist and hasattr(pricelist, '_get_product_price'):
+                    price = pricelist._get_product_price(pt, 1.0)
+                elif pricelist and hasattr(pricelist, 'price_get'):
+                    price = pricelist.price_get(pt.id, 1.0).get(pricelist.id, pt.list_price)
+            except Exception:
+                price = pt.list_price
+            res.append({
+                'id': pt.id,
+                'name': pt.name or '',
+                'website_url': pt.website_url or '#',
+                'dilicom_url_thumb': getattr(pt, 'dilicom_url_thumb', '') or '',
+                'list_price': price,
+            })
+        return {'products': res, 'total': total, 'offset': offset, 'limit': limit}
+
+    @http.route('/slider/published', type='json', auth='public', website=True)
+    def slider_published(self):
+        # Adjust fields as needed
+        fields = ['id', 'title', 'name', 'website_sequence']
+        recs = request.env['website.an_slider_products'].sudo().search_read(
+            [('publish', '=', True)], fields, order='website_sequence asc'
+        )
+        return recs
+
+    @http.route([
+        '/shop',
+        '/shop/page/<int:page>',
+        '/shop/category/<model("product.public.category"):category>',
+        '/shop/category/<model("product.public.category"):category>/page/<int:page>',
+        '/catalogue'], type='http', auth="public", website=True)
+    def catalogue_page(self,category=None,page=1, **post):
+        disponibilities = request.env['dr.product.label'].search([('id', '!=', 2)])
         return request.render('net_diffusion_fel.catalogue_page_template', {
             'disponibilities': disponibilities,
         })
@@ -38,6 +116,7 @@ class FELDiffusion(ShopCartFast):
 
     @http.route(['/catalogue-ajax'], type='json', auth="public", website=True)
     def catalogue_page_ajax(self, search=None, page=1, limit=9, **post):
+
         url = '/catalogue'
         website = request.env['website'].get_current_website()
         # Robust pricelist retrieval compatible across versions/environments
@@ -74,6 +153,7 @@ class FELDiffusion(ShopCartFast):
         if title:
             search_domain.append(('name', 'ilike', title))
         if editeur:
+
             search_domain.append(('editeur', 'ilike', editeur))
         if auteur:
             search_domain.append(('auteur', 'ilike', auteur))
@@ -150,5 +230,6 @@ class FELDiffusion(ShopCartFast):
                 'disponibility_color': product.dr_label_id.text_color if getattr(product, 'dr_label_id', False) else '',
                 'disponibility_color_bck': product.dr_label_id.background_color if getattr(product, 'dr_label_id',
                                                                                            False) else '',
+                'disponibility_id': product.dr_label_id.id if getattr(product, 'dr_label_id', False) else None,
             })
         return {'products': products_data, 'pager': pager_data}

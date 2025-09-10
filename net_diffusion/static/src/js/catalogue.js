@@ -11,15 +11,12 @@ publicWidget.registry.cataloguePage = publicWidget.Widget.extend({
 
     start() {
         this._super(...arguments);
-        this._loadCategories();
-        // Optionally trigger initial search
         // this._searchAjax();
     },
     init() {
         this._super(...arguments);
         this.rpc = this.bindService("rpc");
         this.orm = this.bindService("orm");
-        this.selectedCategoryId = null;
     },
     _onKeyPress: async function (event) {
         if (event.key === 'Enter') {
@@ -27,31 +24,36 @@ publicWidget.registry.cataloguePage = publicWidget.Widget.extend({
         }
     },
     _searchAjax: async function () {
-        const title = document.querySelector("input[name='title']").value;
-        const auteur = document.querySelector("input[name='editor']").value;
-        const editeur = document.querySelector("input[name='author']").value;
-        const collection = document.querySelector("input[name='collection']").value;
-        const ean = document.querySelector("input[name='ean']").value;
-        const disponibility = document.querySelector("select[name='disponility']").value;
-        const date_from = document.querySelector("input[name='date_from']")?.value || '';
-        const date_to = document.querySelector("input[name='date_to']")?.value || '';
-        const category_id = this.selectedCategoryId || null;
+        var title = document.querySelector("input[name='title']").value;
+        var auteur = document.querySelector("input[name='editor']").value;
+        var editeur = document.querySelector("input[name='author']").value;
+        var collection = document.querySelector("input[name='collection']").value;
+        var ean = document.querySelector("input[name='ean']").value;
+        var disponibility = document.querySelector("select[name='disponility']").value;
 
-        const payload = {
-            title, auteur, editeur, collection, ean, disponibility, date_from, date_to, category_id,
-        };
-        const result = await this.rpc('/catalogue-ajax', payload);
-        if (result && result.products) {
-            // map types for display
-            result.products.forEach(livre => {
+        var result = await this.rpc('/catalogue-ajax', {
+            'title': title,
+            'auteur': auteur,
+            'editeur': editeur,
+            'collection': collection,
+            'ean': ean,
+            'disponibility': disponibility,
+        });
+        if (result) {
+            console.log(result);
+            result.forEach(livre => {
                 livre['type_livre'] = this._process_type_book(livre['type_livre']);
             });
 
-            const container = document.querySelector('.catalogue_products_container');
-            const newHTML = $(renderToElement('net_diffusion.products_ajax', {
-                products: result.products,
+            var catalogue_products_container = document.querySelector('.catalogue_products_container');
+
+            var newHTML = $(renderToElement('net_diffusion.products_ajax', {
+                products: result,
+
             }));
-            container.outerHTML = newHTML[0].outerHTML;
+            catalogue_products_container.outerHTML = newHTML[0].outerHTML;
+
+
         }
     },
     _process_type_book: function (type) {
@@ -85,51 +87,5 @@ publicWidget.registry.cataloguePage = publicWidget.Widget.extend({
         };
 
         return typeMap[type] || '';
-    },
-    _loadCategories: async function () {
-        const tree = document.getElementById('catalogue_category_tree');
-        if (!tree) return;
-        const roots = await this.rpc('/catalogue/categories', {});
-        tree.innerHTML = '';
-        const ul = document.createElement('ul');
-        roots.forEach(cat => ul.appendChild(this._renderCategoryNode(cat)));
-        tree.appendChild(ul);
-    },
-    _renderCategoryNode: function (cat) {
-        const li = document.createElement('li');
-        li.className = 'catalogue_cat_node';
-        const caret = document.createElement('span');
-        caret.className = 'caret' + (cat.has_children ? '' : ' disabled');
-        caret.textContent = cat.has_children ? '▸' : '';
-        const label = document.createElement('span');
-        label.className = 'label';
-        label.textContent = cat.name;
-        label.style.cursor = 'pointer';
-        label.onclick = () => {
-            this.selectedCategoryId = cat.id;
-            // highlight selection
-            document.querySelectorAll('#catalogue_category_tree .label').forEach(el => el.classList.remove('selected'));
-            label.classList.add('selected');
-        };
-        li.appendChild(caret);
-        li.appendChild(label);
-        if (cat.has_children) {
-            caret.style.cursor = 'pointer';
-            caret.onclick = async () => {
-                if (li.querySelector('ul')) {
-                    // toggle
-                    const ul = li.querySelector('ul');
-                    ul.style.display = ul.style.display === 'none' ? 'block' : 'none';
-                    caret.textContent = ul.style.display === 'none' ? '▸' : '▾';
-                } else {
-                    const children = await this.rpc('/catalogue/categories', {parent_id: cat.id});
-                    const ul = document.createElement('ul');
-                    children.forEach(ch => ul.appendChild(this._renderCategoryNode(ch)));
-                    li.appendChild(ul);
-                    caret.textContent = '▾';
-                }
-            };
-        }
-        return li;
     }
 });
