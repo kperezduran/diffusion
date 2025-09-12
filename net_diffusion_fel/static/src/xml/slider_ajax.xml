@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <!-- Slider Bootstrap Carousel -->
+    <t t-name="net_diffusion_fel.slider_ajax">
+        <div class="netfel-slider-block my-4" t-att-data-slider-id="slider_id">
+            <t t-if="title">
+                <h3 class="netfel-slider-title mb-3 text-center" t-out="title"/>
+            </t>
+
+            <!-- Bootstrap Carousel -->
+            <div t-attf-id="productCarousel{{slider_id}}" class="carousel slide netfel-carousel" data-bs-ride="false">
+                <!-- Carousel inner container -->
+                <div class="carousel-inner netfel-carousel-inner">
+                    <!-- Les slides seront ajoutées dynamiquement ici -->
+                </div>
+
+                <!-- Contrôles de navigation -->
+                <button class="carousel-control-prev" type="button" t-attf-data-bs-target="#productCarousel{{slider_id}}" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Précédent</span>
+                </button>
+                <button class="carousel-control-next netfel-carousel-next" type="button" t-attf-data-bs-target="#productCarousel{{slider_id}}" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Suivant</span>
+                </button>
+
+                <!-- Indicateurs (optionnel) -->
+                <div class="carousel-indicators netfel-carousel-indicators">
+                    <!-- Les indicateurs seront ajoutés dynamiquement -->
+                </div>
+            </div>
+
+            <!-- Loader -->
+            <div class="netfel-slider-loader text-center py-3">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Chargement...</span>
+                </div>
+                <p class="mt-2 mb-0">Chargement des produits...</p>
+            </div>
+        </div>
+    </t>
+</templates>

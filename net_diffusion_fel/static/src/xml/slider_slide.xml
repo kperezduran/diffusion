@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <!-- Slide item pour le carousel Bootstrap -->
+    <t t-name="net_diffusion_fel.carousel_slide">
+        <div class="carousel-item" t-att-class="isActive and 'active' or ''">
+            <div class="row g-3 justify-content-center">
+                <t t-foreach="products" t-as="product" t-key="product.id">
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <t t-call="net_diffusion_fel.product_card"/>
+                    </div>
+                </t>
+            </div>
+        </div>
+    </t>
+
+    <!-- Carte produit individuelle -->
+    <t t-name="net_diffusion_fel.product_card">
+        <div class="product-card card h-100 shadow-sm">
+            <!-- Badge de disponibilité -->
+            <div t-if="product.disponibility_name != ''" class="position-absolute top-0 end-0 z-1">
+                <span class="badge rounded-pill"
+                      t-attf-style="background-color:{{product.disponibility_color_bck}}; color:{{product.disponibility_color}};"
+                      t-out="product.disponibility_name"/>
+            </div>
+
+            <!-- Image produit -->
+            <div class="card-img-top-container text-center p-3" style="height: 180px;">
+                <a t-att-href="product.website_url">
+                    <img class="img-fluid h-100"
+                         t-att-src="product.dilicom_url || '/web/static/src/img/placeholder.png'"
+                         t-att-alt="product.name"
+                         loading="lazy"
+                         style="object-fit: contain;"/>
+                </a>
+            </div>
+
+            <!-- Contenu de la carte -->
+            <div class="card-body p-3 d-flex flex-column">
+                <!-- Titre -->
+                <h6 class="card-title mb-2" style="height: 3rem; overflow: hidden;">
+                    <a t-att-href="product.website_url" class="text-decoration-none text-dark">
+                        <span t-out="product.name" t-att-title="product.name"/>
+                    </a>
+                </h6>
+
+                <!-- Métadonnées -->
+                <div class="card-text small text-muted flex-grow-1">
+                    <div t-if="product.auteur != ''" class="mb-1 text-truncate">
+                        <strong>Auteur:</strong> <span t-out="product.auteur"/>
+                    </div>
+                    <div t-if="product.editeur != ''" class="mb-1 text-truncate">
+                        <strong>Éditeur:</strong> <span t-out="product.editeur"/>
+                    </div>
+                    <div t-if="product.date_parution != ''" class="mb-1">
+                        <strong>Parution:</strong> <span t-out="product.date_parution"/>
+                    </div>
+                </div>
+
+                <!-- Prix et bouton -->
+                <div class="mt-auto">
+                    <!-- Prix -->
+                    <div class="text-center mb-2">
+                        <t t-if="product.price == product.base_price">
+                            <div class="h6 mb-0 text-primary fw-bold">
+                                <span t-out="product.price"/>€
+                            </div>
+                        </t>
+                        <t t-if="product.price &lt; product.base_price">
+                            <div class="small text-muted text-decoration-line-through">
+                                <span t-out="product.base_price"/>€
+                            </div>
+                            <div class="h6 mb-0 text-primary fw-bold">
+                                <span t-out="product.price"/>€
+                            </div>
+                        </t>
+                    </div>
+
+                    <!-- Bouton d'ajout au panier -->
+                    <t t-if="product.disponibility_id in ['1','2','3',1,2,3]">
+                        <div class="d-grid">
+                            <button type="button"
+                                    class="btn btn-sm btn-primary js_add_cart_json"
+                                    t-att-data-product-id="product.variant"
+                                    t-att-data-csrf="product.csrf_token">
+                                <i class="fa fa-shopping-cart me-1"></i>
+                                Ajouter
+                            </button>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

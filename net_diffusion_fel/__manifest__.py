@@ -18,11 +18,14 @@
     ],
     'assets': {
         'web.assets_frontend': [
-            'net_diffusion/static/lib/swiperjs/swiper-element-bundle.min.js',
+            # Supprimé Swiper JS car on utilise Bootstrap
             'net_diffusion_fel/static/src/css/catalogue.css',
+            'net_diffusion_fel/static/src/css/slider.css',  # Nouveau CSS
             'net_diffusion_fel/static/src/js/catalogue.js',
             'net_diffusion_fel/static/src/js/net_slider_loader.js',
             'net_diffusion_fel/static/src/xml/catalogue_ajax.xml',
+            'net_diffusion_fel/static/src/xml/slider_ajax.xml',
+            'net_diffusion_fel/static/src/xml/slider_slide.xml',
         ],
     },
 }

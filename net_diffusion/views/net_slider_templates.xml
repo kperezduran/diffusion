@@ -18,7 +18,7 @@
                 if (window.Swiper) {
                     setTimeout(function(){
                         try{
-                            new Swiper('.mySwiper', {
+                            new Swiper('.mySwiper:not(.netfel-swiper)', {
                                 slidesPerView: 5,
                                 spaceBetween: 16,
                                 navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },

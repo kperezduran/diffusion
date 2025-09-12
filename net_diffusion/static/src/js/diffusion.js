@@ -90,8 +90,8 @@ publicWidget.registry.websiteSliders = publicWidget.Widget.extend({
     selector: '.homepage',
 
     start() {
-        // swiper element
-        const swipers = document.querySelectorAll('swiper-container.mySwiper');
+        // swiper element (exclude FEL sliders)
+        const swipers = document.querySelectorAll('swiper-container.mySwiper:not(.netfel-swiper)');
         swipers.forEach(swiperEl => {
             // swiper parameters
             const swiperParams = {

@@ -61,6 +61,7 @@ class FELDiffusion(ShopCartFast):
         res = []
         for pt in products:
             variant = ProductProduct.search([('product_tmpl_id', '=', pt.id)], limit=1)
+            # price computation
             price = pt.list_price
             try:
                 if pricelist and hasattr(pricelist, '_get_product_price'):
@@ -69,12 +70,29 @@ class FELDiffusion(ShopCartFast):
                     price = pricelist.price_get(pt.id, 1.0).get(pricelist.id, pt.list_price)
             except Exception:
                 price = pt.list_price
+            # build payload expected by net_diffusion_fel.products_ajax template
             res.append({
                 'id': pt.id,
+                'variant': variant.id if variant else None,
                 'name': pt.name or '',
                 'website_url': pt.website_url or '#',
+                'editeur': getattr(pt, 'editeur', '') or '',
+                'auteur': getattr(pt, 'auteur', '') or '',
+                'barcode': pt.barcode or '',
+                'collection': getattr(pt, 'collection', '') or '',
+                'price': round(price, 2) if isinstance(price, (int, float)) else price,
+                'base_price': round(pt.list_price, 2) if isinstance(pt.list_price, (int, float)) else pt.list_price,
+                'description_ecommerce': pt.description_ecommerce or '',
+                'type_livre': getattr(pt, 'type_livre', '') or '',
+                'date_parution': pt.date_parution.strftime('%d/%m/%Y') if getattr(pt, 'date_parution', False) else '',
+                'dilicom_url': getattr(pt, 'dilicom_url', '') or '',
                 'dilicom_url_thumb': getattr(pt, 'dilicom_url_thumb', '') or '',
-                'list_price': price,
+                'token': getattr(pt, 'dilicom_url', '') or '',
+                'csrf_token': request.csrf_token(),
+                'disponibility_name': pt.dr_label_id.name if getattr(pt, 'dr_label_id', False) else '',
+                'disponibility_color': pt.dr_label_id.text_color if getattr(pt, 'dr_label_id', False) else '',
+                'disponibility_color_bck': pt.dr_label_id.background_color if getattr(pt, 'dr_label_id', False) else '',
+                'disponibility_id': pt.dr_label_id.id if getattr(pt, 'dr_label_id', False) else None,
             })
         return {'products': res, 'total': total, 'offset': offset, 'limit': limit}
 

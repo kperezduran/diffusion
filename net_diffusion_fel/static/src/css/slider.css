@@ -1,0 +1,71 @@
+/* Styles pour le slider Bootstrap */
+.netfel-carousel {
+    overflow: hidden;
+}
+
+.netfel-carousel .carousel-control-prev,
+.netfel-carousel .carousel-control-next {
+    width: 50px;
+    height: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+
+.netfel-carousel .carousel-control-prev:hover,
+.netfel-carousel .carousel-control-next:hover {
+    opacity: 1;
+}
+
+.netfel-carousel .carousel-indicators {
+    margin-bottom: -20px;
+}
+
+.netfel-carousel .carousel-indicators button {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: 0 5px;
+}
+
+/* Styles pour les cartes produits */
+.product-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid #e9ecef;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.product-card .card-title {
+    font-size: 0.9rem;
+    line-height: 1.2;
+}
+
+.product-card .card-text {
+    font-size: 0.8rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .netfel-carousel .carousel-control-prev,
+    .netfel-carousel .carousel-control-next {
+        display: none;
+    }
+
+    .netfel-carousel .carousel-indicators {
+        display: block;
+    }
+}
+
+@media (min-width: 768px) {
+    .netfel-carousel .carousel-indicators {
+        display: none;
+    }
+}
